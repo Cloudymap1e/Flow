@@ -1,0 +1,181 @@
+import Foundation
+import Combine
+
+@MainActor
+final class TimerViewModel: ObservableObject {
+    enum Mode {
+        case flow, shortBreak, longBreak
+        var title: String {
+            switch self {
+            case .flow: return "Flow"
+            case .shortBreak: return "Short Break"
+            case .longBreak: return "Long Break"
+            }
+        }
+    }
+
+    // User-adjustable durations (mirrors your iOS menu).
+    @Published var flowDuration: Int = 25 * 60     // seconds
+    @Published var shortBreak: Int = 5 * 60
+    @Published var longBreak: Int = 30 * 60
+
+    // Cycle: after 4 flows, propose a long break.
+    @Published private(set) var completedFlowsInCycle: Int = 0
+    @Published private(set) var mode: Mode = .flow
+    @Published private(set) var isRunning: Bool = false
+    @Published private(set) var remaining: Int = 25 * 60
+    @Published private(set) var sessionTitle: String
+
+    var displayTitle: String {
+        mode == .flow ? sessionTitle : mode.title
+    }
+
+    var currentDurationSeconds: Int { intendedSeconds() }
+    var hasProgress: Bool { remaining < currentDurationSeconds }
+
+    private let customTitleKey = "TimerView.sessionTitle"
+    private var startTS: Date?
+    private var tickCancellable: AnyCancellable?
+
+    // Hook to persist sessions
+    weak var store: SessionStore?
+
+    // MARK: Life
+    init() {
+        let storedTitle = UserDefaults.standard.string(forKey: customTitleKey) ?? "Flow"
+        self.sessionTitle = storedTitle
+        self.remaining = flowDuration
+    }
+
+    func attach(store: SessionStore) { self.store = store }
+
+    // MARK: Controls
+    func start() {
+        guard !isRunning else { return }
+        isRunning = true
+        if startTS == nil { startTS = Date() }
+        tickCancellable = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in self?.tick() }
+    }
+
+    func pause() {
+        isRunning = false
+        tickCancellable?.cancel()
+    }
+
+    func stopAndSavePartial() {
+        // If we have elapsed > 0, persist as a partial session.
+        let elapsed = intendedSeconds() - remaining
+        if elapsed > 0 {
+            persistSession(actualSeconds: elapsed)
+        }
+        resetAfterStop()
+    }
+
+    func complete() {
+        persistSession(actualSeconds: intendedSeconds())
+        // Advance cycle logic
+        if mode == .flow {
+            completedFlowsInCycle += 1
+        }
+        advanceModeAfterCompletion()
+    }
+
+    func resetToFlow() {
+        mode = .flow
+        remaining = flowDuration
+        isRunning = false
+        tickCancellable?.cancel()
+        startTS = nil
+    }
+
+    func resetCurrentSession() {
+        pause()
+        startTS = nil
+        remaining = intendedSeconds()
+    }
+
+    func renameSession(to rawTitle: String) {
+        let trimmed = rawTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sanitized = trimmed.isEmpty ? "Flow" : trimmed
+        sessionTitle = sanitized
+        UserDefaults.standard.set(sanitized, forKey: customTitleKey)
+    }
+
+    // MARK: Internal
+    private func tick() {
+        guard remaining > 0 else {
+            pause()
+            complete()
+            return
+        }
+        remaining -= 1
+    }
+
+    private func intendedSeconds() -> Int {
+        switch mode {
+        case .flow: return flowDuration
+        case .shortBreak: return shortBreak
+        case .longBreak: return longBreak
+        }
+    }
+
+    private func persistSession(actualSeconds: Int) {
+        guard let store = store else { return }
+        let now = Date()
+        let label = mode == .flow ? sessionTitle : mode.title
+        let s = Session(
+            title: label,
+            kind: mode == .flow ? .flow : (mode == .shortBreak ? .shortBreak : .longBreak),
+            durationSeconds: intendedSeconds(),
+            actualSeconds: max(0, actualSeconds),
+            startTimestamp: startTS,
+            endTimestamp: now)
+        store.add(s)
+    }
+
+    private func resetAfterStop() {
+        pause()
+        startTS = nil
+        remaining = intendedSeconds()
+    }
+
+    private func advanceModeAfterCompletion() {
+        // Flow -> (short/long) break; Break -> Flow
+        if mode == .flow {
+            if completedFlowsInCycle > 0 && completedFlowsInCycle % 4 == 0 {
+                mode = .longBreak
+            } else {
+                mode = .shortBreak
+            }
+        } else {
+            mode = .flow
+        }
+        startTS = nil
+        remaining = intendedSeconds()
+    }
+
+    // Called when durations change via menu
+    func applyDurations(flow: Int? = nil, short: Int? = nil, long: Int? = nil) {
+        if let f = flow { flowDuration = f }
+        if let s = short { shortBreak = s }
+        if let l = long  { longBreak = l }
+        if !isRunning {
+            remaining = intendedSeconds()
+        }
+    }
+}
+
+// MARK: - Simple time formatting used by the UI
+extension Int {
+    /// Formats seconds as mm:ss or h:mm:ss when >= 1h.
+    var clockString: String {
+        let s = self
+        let h = s / 3600
+        let m = (s % 3600) / 60
+        let sec = s % 60
+        if h > 0 { return String(format: "%d:%02d:%02d", h, m, sec) }
+        return String(format: "%02d:%02d", m, sec)
+    }
+}

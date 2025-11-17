@@ -7,45 +7,46 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		516FAF1E2ECBB44E006E3E0E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 516FAF072ECBB44D006E3E0E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 516FAF0E2ECBB44D006E3E0E;
-			remoteInfo = Flow;
-		};
-		516FAF282ECBB44E006E3E0E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 516FAF072ECBB44D006E3E0E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 516FAF0E2ECBB44D006E3E0E;
-			remoteInfo = Flow;
-		};
+			516FAF1E2ECBB44E006E3E0E /* PBXContainerItemProxy */ = {
+				isa = PBXContainerItemProxy;
+				containerPortal = 516FAF072ECBB44D006E3E0E /* Project object */;
+				proxyType = 1;
+				remoteGlobalIDString = 516FAF0E2ECBB44D006E3E0E;
+				remoteInfo = Flow;
+			};
+			516FAF282ECBB44E006E3E0E /* PBXContainerItemProxy */ = {
+				isa = PBXContainerItemProxy;
+				containerPortal = 516FAF072ECBB44D006E3E0E /* Project object */;
+				proxyType = 1;
+				remoteGlobalIDString = 516FAF0E2ECBB44D006E3E0E;
+				remoteInfo = Flow;
+			};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXFileReference section */
-		516FAF0F2ECBB44D006E3E0E /* Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flow.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		516FAF1D2ECBB44E006E3E0E /* FlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		516FAF272ECBB44E006E3E0E /* FlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
+/* Begin PBXBuildFile section */
+		0B9800CB160E10A860EAF2B3 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4C2ECBB786006E3E0E /* TimerView.swift */; };
+		1A6BE3ABCD1585753940AFBC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4D2ECBB791006E3E0E /* StatsView.swift */; };
+		32AD9530DC1E09460339CF37 /* LearningTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */; };
+		40C824D37012982788A4583D /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4E2ECBB7A1006E3E0E /* AppCommands.swift */; };
+		548E8EBDC7F59B434050AE35 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF482ECBB749006E3E0E /* Models.swift */; };
+		9350A83623204DB7C49F24E8 /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4A2ECBB76D006E3E0E /* TimerViewModel.swift */; };
+		9BCFD6CEB648CF32EE75DF18 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF492ECBB75C006E3E0E /* SessionStore.swift */; };
+		FCCBCF317CB40E86D46551B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4B2ECBB779006E3E0E /* ContentView.swift */; };
+/* End PBXBuildFile section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		516FAF112ECBB44D006E3E0E /* Flow */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Flow;
-			sourceTree = "<group>";
-		};
-		516FAF202ECBB44E006E3E0E /* FlowTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = FlowTests;
-			sourceTree = "<group>";
-		};
-		516FAF2A2ECBB44E006E3E0E /* FlowUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = FlowUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
+/* Begin PBXFileReference section */
+			516FAF0F2ECBB44D006E3E0E /* Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+			516FAF1D2ECBB44E006E3E0E /* FlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+			516FAF272ECBB44E006E3E0E /* FlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+			516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningTimerApp.swift; sourceTree = "<group>"; };
+			516FAF482ECBB749006E3E0E /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		516FAF492ECBB75C006E3E0E /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+		516FAF4A2ECBB76D006E3E0E /* TimerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerViewModel.swift; sourceTree = "<group>"; };
+		516FAF4B2ECBB779006E3E0E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		516FAF4C2ECBB786006E3E0E /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		516FAF4D2ECBB791006E3E0E /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		516FAF4E2ECBB7A1006E3E0E /* AppCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommands.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		516FAF0C2ECBB44D006E3E0E /* Frameworks */ = {
@@ -75,9 +76,14 @@
 		516FAF062ECBB44D006E3E0E = {
 			isa = PBXGroup;
 			children = (
-				516FAF112ECBB44D006E3E0E /* Flow */,
-				516FAF202ECBB44E006E3E0E /* FlowTests */,
-				516FAF2A2ECBB44E006E3E0E /* FlowUITests */,
+				516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */,
+				516FAF482ECBB749006E3E0E /* Models.swift */,
+				516FAF492ECBB75C006E3E0E /* SessionStore.swift */,
+				516FAF4A2ECBB76D006E3E0E /* TimerViewModel.swift */,
+				516FAF4B2ECBB779006E3E0E /* ContentView.swift */,
+				516FAF4C2ECBB786006E3E0E /* TimerView.swift */,
+				516FAF4D2ECBB791006E3E0E /* StatsView.swift */,
+				516FAF4E2ECBB7A1006E3E0E /* AppCommands.swift */,
 				516FAF102ECBB44D006E3E0E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -107,9 +113,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				516FAF112ECBB44D006E3E0E /* Flow */,
-			);
 			name = Flow;
 			packageProductDependencies = (
 			);
@@ -130,9 +133,6 @@
 			dependencies = (
 				516FAF1F2ECBB44E006E3E0E /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				516FAF202ECBB44E006E3E0E /* FlowTests */,
-			);
 			name = FlowTests;
 			packageProductDependencies = (
 			);
@@ -152,9 +152,6 @@
 			);
 			dependencies = (
 				516FAF292ECBB44E006E3E0E /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				516FAF2A2ECBB44E006E3E0E /* FlowUITests */,
 			);
 			name = FlowUITests;
 			packageProductDependencies = (
@@ -232,14 +229,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		516FAF0B2ECBB44D006E3E0E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		516FAF192ECBB44E006E3E0E /* Sources */ = {
+			516FAF0B2ECBB44D006E3E0E /* Sources */ = {
+				isa = PBXSourcesBuildPhase;
+				buildActionMask = 2147483647;
+				files = (
+					32AD9530DC1E09460339CF37 /* LearningTimerApp.swift in Sources */,
+					548E8EBDC7F59B434050AE35 /* Models.swift in Sources */,
+					9BCFD6CEB648CF32EE75DF18 /* SessionStore.swift in Sources */,
+					9350A83623204DB7C49F24E8 /* TimerViewModel.swift in Sources */,
+					FCCBCF317CB40E86D46551B4 /* ContentView.swift in Sources */,
+					0B9800CB160E10A860EAF2B3 /* TimerView.swift in Sources */,
+					1A6BE3ABCD1585753940AFBC /* StatsView.swift in Sources */,
+					40C824D37012982788A4583D /* AppCommands.swift in Sources */,
+				);
+				runOnlyForDeploymentPostprocessing = 0;
+			};
+			516FAF192ECBB44E006E3E0E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -390,7 +395,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Flow/Flow.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Flow.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 35X7QVG97Q;
@@ -429,7 +434,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Flow/Flow.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Flow.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 35X7QVG97Q;
