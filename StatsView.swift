@@ -483,7 +483,7 @@ struct CalendarHeatmapView: View {
                 }
 
                 // Days
-                ForEach(daysInMonth, id: \.self) { date in
+                ForEach(Array(daysInMonth.enumerated()), id: \.offset) { index, date in
                     if let date = date {
                         DayCell(
                             date: date,
@@ -570,12 +570,9 @@ struct DayCell: View {
     }
 
     private var tooltipText: String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        let dateStr = formatter.string(from: date)
-        if seconds == 0 { return "\(dateStr)\nNo focus" }
+        if seconds == 0 { return "No focus" }
         let mins = seconds / 60
-        return "\(dateStr)\n\(mins) mins focused"
+        return "\(mins) mins focused"
     }
 
     private func color(for seconds: Int) -> Color {
