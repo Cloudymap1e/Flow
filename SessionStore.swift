@@ -48,6 +48,57 @@ final class SessionStore: ObservableObject {
             sessions = []
             saveToDisk() // Ensure file exists for next run.
         }
+        
+        // If empty, try loading default data from bundle
+        if sessions.isEmpty {
+            loadDefaultData()
+        }
+    }
+    
+    private func loadDefaultData() {
+        guard let url = Bundle.main.url(forResource: "default_data", withExtension: "csv") else { return }
+        do {
+            // Directly import without showing the import message
+            let raw = try String(contentsOf: url, encoding: .utf8)
+            let lines = raw.split(whereSeparator: \.isNewline)
+            guard lines.count > 1 else { return }
+
+            let df = DateFormatter()
+            df.locale = Locale(identifier: "en_US_POSIX")
+            df.timeZone = TimeZone(secondsFromGMT: 0)
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+            var imported = 0
+
+            for (idx, lineSlice) in lines.enumerated() where idx > 0 {
+                let cols = parseCSVLine(String(lineSlice))
+                guard cols.count >= 3 else { continue }
+
+                let title = cols[0].trimmingCharacters(in: .whitespacesAndNewlines)
+                let start = df.date(from: cols[1])
+                let end = df.date(from: cols[2])
+                guard let startDate = start, let endDate = end else { continue }
+
+                let duration = max(0, Int(endDate.timeIntervalSince(startDate)))
+
+                let session = Session(
+                    title: title.isEmpty ? "Session" : title,
+                    kind: .custom,
+                    durationSeconds: duration,
+                    actualSeconds: duration,
+                    startTimestamp: startDate,
+                    endTimestamp: endDate)
+
+                sessions.append(session)
+                imported += 1
+            }
+            
+            if imported > 0 {
+                saveToDisk()
+            }
+        } catch {
+            print("Failed to load default data: \(error)")
+        }
     }
 
     func saveToDisk() {

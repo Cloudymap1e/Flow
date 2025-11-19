@@ -16,6 +16,9 @@ let package = Package(
             exclude: [
                 "Flow.xcodeproj",
                 "Flow.entitlements"
+            ],
+            resources: [
+                .process("Assets.xcassets")
             ]
         )
     ]

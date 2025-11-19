@@ -6,7 +6,97 @@ struct ContentView: View {
 
     @State private var selectedTab: Int = 0 // 0 = Timer, 1 = Stats
     @State private var showErrorBanner: Bool = false
+    
+    // Window Management
+    @State private var isFloating: Bool = false
+    @State private var originalFrame: NSRect?
+    @State private var window: NSWindow?
 
+    var body: some View {
+        ZStack {
+            if isFloating {
+                MiniTimerView()
+                    .transition(.opacity)
+            } else {
+                MainView(selectedTab: $selectedTab)
+                    .transition(.opacity)
+            }
+            
+            // Hidden window accessor to capture the window instance
+            WindowAccessor { win in
+                self.window = win
+            }
+            .frame(width: 0, height: 0)
+        }
+        .onAppear { timer.attach(store: store) }
+        .overlay(alignment: .bottom) {
+            if let msg = store.lastErrorMessage, !msg.isEmpty, !isFloating {
+                ErrorBanner(text: msg)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation { store.lastErrorMessage = nil }
+                        }
+                    }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+            if timer.floatOnBackground && !isFloating {
+                startFloating()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            if isFloating {
+                stopFloating()
+            }
+        }
+    }
+    
+    private func startFloating() {
+        guard let win = window else { return }
+        
+        // Save original frame
+        originalFrame = win.frame
+        
+        // Calculate new frame (bottom right corner, small size)
+        let screenFrame = win.screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
+        let newSize = CGSize(width: 250, height: 120)
+        let newOrigin = CGPoint(
+            x: screenFrame.maxX - newSize.width - 20,
+            y: screenFrame.minY + 20
+        )
+        
+        let newFrame = NSRect(origin: newOrigin, size: newSize)
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isFloating = true
+        }
+        
+        win.level = .floating
+        win.styleMask.remove(.resizable)
+        win.styleMask.remove(.miniaturizable)
+        win.setFrame(newFrame, display: true, animate: true)
+        win.isMovableByWindowBackground = true
+    }
+    
+    private func stopFloating() {
+        guard let win = window, let original = originalFrame else { return }
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isFloating = false
+        }
+        
+        win.level = .normal
+        win.styleMask.insert(.resizable)
+        win.styleMask.insert(.miniaturizable)
+        win.setFrame(original, display: true, animate: true)
+        win.isMovableByWindowBackground = false
+    }
+}
+
+struct MainView: View {
+    @Binding var selectedTab: Int
+    @EnvironmentObject private var timer: TimerViewModel
+    
     var body: some View {
         ZStack {
             // 1. Dynamic Background
@@ -38,19 +128,8 @@ struct ContentView: View {
                 .animation(.easeInOut(duration: 0.3), value: selectedTab)
             }
         }
-        .onAppear { timer.attach(store: store) }
-        .overlay(alignment: .bottom) {
-            if let msg = store.lastErrorMessage, !msg.isEmpty {
-                ErrorBanner(text: msg)
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation { store.lastErrorMessage = nil }
-                        }
-                    }
-            }
-        }
     }
-
+    
     private func tabButton(title: String, tag: Int) -> some View {
         Button {
             withAnimation { selectedTab = tag }

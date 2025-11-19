@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import SwiftUI
 
 @MainActor
 final class TimerViewModel: ObservableObject {
@@ -22,6 +23,7 @@ final class TimerViewModel: ObservableObject {
     // Cycle: after 4 flows, propose a long break.
     @Published private(set) var completedFlowsInCycle: Int = 0
     @Published private(set) var mode: Mode = .flow
+    @AppStorage("floatOnBackground") var floatOnBackground: Bool = false
     @Published private(set) var isRunning: Bool = false
     @Published private(set) var remaining: Int = 25 * 60
     @Published private(set) var sessionTitle: String

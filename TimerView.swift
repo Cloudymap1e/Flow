@@ -197,6 +197,9 @@ struct TimerView: View {
             settingsRow(title: "Flow", binding: $flowMinutes)
             settingsRow(title: "Short Break", binding: $shortMinutes)
             settingsRow(title: "Long Break", binding: $longMinutes)
+            
+            Toggle("Float when backgrounded", isOn: $timer.floatOnBackground)
+                .padding(.vertical, 4)
 
             if let validationMessage {
                 Text(validationMessage)

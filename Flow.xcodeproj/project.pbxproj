@@ -11,6 +11,9 @@
 		1A6BE3ABCD1585753940AFBC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4D2ECBB791006E3E0E /* StatsView.swift */; };
 		32AD9530DC1E09460339CF37 /* LearningTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */; };
 		40C824D37012982788A4583D /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4E2ECBB7A1006E3E0E /* AppCommands.swift */; };
+		51A85EA62ECE04860033FEC2 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA42ECE04860033FEC2 /* Package.swift */; };
+		51A85EA72ECE04860033FEC2 /* MiniTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */; };
+		51A85EA82ECE04860033FEC2 /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA52ECE04860033FEC2 /* WindowAccessor.swift */; };
 		51E23B9E2ECDAEB90054BB0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */; };
 		548E8EBDC7F59B434050AE35 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF482ECBB749006E3E0E /* Models.swift */; };
 		9350A83623204DB7C49F24E8 /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4A2ECBB76D006E3E0E /* TimerViewModel.swift */; };
@@ -47,6 +50,11 @@
 		516FAF4C2ECBB786006E3E0E /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		516FAF4D2ECBB791006E3E0E /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		516FAF4E2ECBB7A1006E3E0E /* AppCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommands.swift; sourceTree = "<group>"; };
+		51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniTimerView.swift; sourceTree = "<group>"; };
+		51A85EA42ECE04860033FEC2 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		51A85EA52ECE04860033FEC2 /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
+		51A85EA92ECE04B50033FEC2 /* Flow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flow.entitlements; sourceTree = "<group>"; };
+		51A85EAA2ECE04B50033FEC2 /* Flow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Flow.xcodeproj; sourceTree = "<group>"; };
 		51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,6 +86,11 @@
 		516FAF062ECBB44D006E3E0E = {
 			isa = PBXGroup;
 			children = (
+				51A85EA92ECE04B50033FEC2 /* Flow.entitlements */,
+				51A85EAA2ECE04B50033FEC2 /* Flow.xcodeproj */,
+				51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */,
+				51A85EA42ECE04860033FEC2 /* Package.swift */,
+				51A85EA52ECE04860033FEC2 /* WindowAccessor.swift */,
 				51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */,
 				516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */,
 				516FAF482ECBB749006E3E0E /* Models.swift */,
@@ -98,6 +111,11 @@
 				516FAF1D2ECBB44E006E3E0E /* FlowTests.xctest */,
 				516FAF272ECBB44E006E3E0E /* FlowUITests.xctest */,
 			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		51A85EAB2ECE04B50033FEC2 /* Products */ = {
+			isa = PBXGroup;
 			name = Products;
 			sourceTree = "<group>";
 		};
@@ -198,6 +216,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 516FAF102ECBB44D006E3E0E /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 51A85EAB2ECE04B50033FEC2 /* Products */;
+					ProjectRef = 51A85EAA2ECE04B50033FEC2 /* Flow.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				516FAF0E2ECBB44D006E3E0E /* Flow */,
@@ -239,6 +263,9 @@
 			files = (
 				32AD9530DC1E09460339CF37 /* LearningTimerApp.swift in Sources */,
 				548E8EBDC7F59B434050AE35 /* Models.swift in Sources */,
+				51A85EA62ECE04860033FEC2 /* Package.swift in Sources */,
+				51A85EA72ECE04860033FEC2 /* MiniTimerView.swift in Sources */,
+				51A85EA82ECE04860033FEC2 /* WindowAccessor.swift in Sources */,
 				9BCFD6CEB648CF32EE75DF18 /* SessionStore.swift in Sources */,
 				9350A83623204DB7C49F24E8 /* TimerViewModel.swift in Sources */,
 				FCCBCF317CB40E86D46551B4 /* ContentView.swift in Sources */,

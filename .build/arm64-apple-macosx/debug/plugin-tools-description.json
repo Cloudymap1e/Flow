@@ -3,7 +3,20 @@
 
   ],
   "copyCommands" : {
-
+    "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow_Flow.bundle/Assets.xcassets" : {
+      "inputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/rc/Documents/Flow/Assets.xcassets"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow_Flow.bundle/Assets.xcassets"
+        }
+      ]
+    }
   },
   "explicitTargetDependencyImportCheckingMode" : {
     "none" : {
@@ -36,6 +49,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/MiniTimerView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/Models.swift"
         },
         {
@@ -56,7 +73,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/WindowAccessor.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<Flow-arm64-apple-macosx16.0-debug.module-resources>"
         },
         {
           "kind" : "file",
@@ -70,11 +103,15 @@
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/SessionStore.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/StatsView.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerView.swift.o",
-        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swift.o"
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -143,6 +180,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swift.o"
         },
         {
@@ -163,6 +204,18 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Modules/Flow.swiftmodule"
         }
       ],
@@ -171,11 +224,15 @@
         "/Users/rc/Documents/Flow/AppCommands.swift",
         "/Users/rc/Documents/Flow/ContentView.swift",
         "/Users/rc/Documents/Flow/LearningTimerApp.swift",
+        "/Users/rc/Documents/Flow/MiniTimerView.swift",
         "/Users/rc/Documents/Flow/Models.swift",
         "/Users/rc/Documents/Flow/SessionStore.swift",
         "/Users/rc/Documents/Flow/StatsView.swift",
         "/Users/rc/Documents/Flow/TimerView.swift",
-        "/Users/rc/Documents/Flow/TimerViewModel.swift"
+        "/Users/rc/Documents/Flow/TimerViewModel.swift",
+        "/Users/rc/Documents/Flow/WindowAccessor.swift",
+        "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift"
       ],
       "tempsPath" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build",
       "wholeModuleOptimization" : false
@@ -196,11 +253,15 @@
       "/Users/rc/Documents/Flow/AppCommands.swift",
       "/Users/rc/Documents/Flow/ContentView.swift",
       "/Users/rc/Documents/Flow/LearningTimerApp.swift",
+      "/Users/rc/Documents/Flow/MiniTimerView.swift",
       "/Users/rc/Documents/Flow/Models.swift",
       "/Users/rc/Documents/Flow/SessionStore.swift",
       "/Users/rc/Documents/Flow/StatsView.swift",
       "/Users/rc/Documents/Flow/TimerView.swift",
       "/Users/rc/Documents/Flow/TimerViewModel.swift",
+      "/Users/rc/Documents/Flow/WindowAccessor.swift",
+      "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift",
+      "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift",
       "-I",
       "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -306,6 +367,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/MiniTimerView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/Models.swift"
         },
         {
@@ -323,6 +388,18 @@
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/TimerViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/WindowAccessor.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift"
         }
       ],
       "outputFilePath" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/sources"
@@ -344,7 +421,15 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o"
         },
         {
           "kind" : "file",
@@ -365,6 +450,14 @@
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor.swift.o"
         }
       ],
       "outputFilePath" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.product/Objects.LinkFileList"

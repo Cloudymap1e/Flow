@@ -20,6 +20,12 @@
     "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp~partial.swiftmodule",
     "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.swiftdeps"
   },
+  "/Users/rc/Documents/Flow/MiniTimerView.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.d",
+    "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swiftdeps"
+  },
   "/Users/rc/Documents/Flow/Models.swift": {
     "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.d",
     "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swift.o",
@@ -49,5 +55,23 @@
     "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swift.o",
     "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel~partial.swiftmodule",
     "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/WindowAccessor.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.d",
+    "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.d",
+    "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor.d",
+    "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor.swiftdeps"
   }
 }
