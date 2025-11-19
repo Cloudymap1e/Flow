@@ -35,6 +35,7 @@ struct StatsView: View {
                     .transition(.move(edge: .leading))
             } else {
                 CalendarHeatmapView(sessions: store.allSessions())
+                    .padding(.top, 20)
                     .transition(.move(edge: .trailing))
             }
 
