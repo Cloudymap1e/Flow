@@ -1,0 +1,65 @@
+{
+  "": {
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/master.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/AppCommands.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/ContentView.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/FocusLockManager.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockManager.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockManager.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockManager.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/FocusLockView.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockView.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockView.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockView~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/FocusLockView.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/LearningTimerApp.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/Models.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/SessionStore.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/SessionStore.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/SessionStore.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/SessionStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/SessionStore.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/StatsView.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/StatsView.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/StatsView.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/StatsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/StatsView.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/TimerView.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerView.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerView.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerView.swiftdeps"
+  },
+  "/Users/rc/Documents/Flow/Flow/TimerViewModel.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.d",
+    "object": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swiftdeps"
+  }
+}

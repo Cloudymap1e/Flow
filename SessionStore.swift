@@ -74,6 +74,10 @@ final class SessionStore: ObservableObject {
         }
     }
 
+    func delete(_ session: Session) {
+        sessions.removeAll { $0.id == session.id }
+    }
+
     func allSessions() -> [Session] { sessions.sorted { ($0.startTimestamp ?? .distantPast) < ($1.startTimestamp ?? .distantPast) } }
 
     // MARK: Import JSON (append/merge by id)
@@ -105,7 +109,7 @@ final class SessionStore: ObservableObject {
 
     // MARK: Import CSV (columns: Session,Started,Completed)
     func importFromCSV(url: URL) throws {
-        let raw = try String(contentsOf: url)
+        let raw = try String(contentsOf: url, encoding: .utf8)
         let lines = raw.split(whereSeparator: \.isNewline)
         guard lines.count > 1 else {
             lastErrorMessage = "CSV appears empty."

@@ -1,6 +1,7 @@
 import SwiftUI
 #if os(macOS)
 import AppKit
+import UniformTypeIdentifiers
 #endif
 
 struct AppCommands: Commands {
@@ -89,7 +90,7 @@ struct AppCommands: Commands {
     private func importJSONOrCSV() {
 #if os(macOS)
         let panel = NSOpenPanel()
-        panel.allowedFileTypes = ["json", "csv"]
+        panel.allowedContentTypes = [.json, .commaSeparatedText]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.begin { resp in
@@ -112,7 +113,7 @@ struct AppCommands: Commands {
     private func exportJSON() {
 #if os(macOS)
         let panel = NSSavePanel()
-        panel.allowedFileTypes = ["json"]
+        panel.allowedContentTypes = [.json]
         panel.nameFieldStringValue = "sessions.json"
         panel.begin { resp in
             guard resp == .OK, let url = panel.url else { return }

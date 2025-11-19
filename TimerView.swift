@@ -10,6 +10,7 @@ struct TimerView: View {
     @State private var titleDraft: String = ""
     @FocusState private var titleFocused: Bool
     @State private var showingSettings: Bool = false
+    @State private var showingFocusLock: Bool = false
     @State private var flowMinutes: Double = 25
     @State private var shortMinutes: Double = 5
     @State private var longMinutes: Double = 30
@@ -19,25 +20,55 @@ struct TimerView: View {
         ZStack {
             VStack {
                 Spacer()
-                VStack(spacing: 18) {
+                VStack(spacing: 24) {
                     titleRow
 
-                    Text(timer.remaining.clockString)
-                        .font(.system(size: 92, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .accessibilityIdentifier("time")
-                        .padding(.top, 2)
+                    // Timer Circle
+                    ZStack {
+                        // Glassy background circle
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .frame(width: 300, height: 300)
+                            .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                            )
+
+                        // Progress Ring
+                        Circle()
+                            .trim(from: 0, to: CGFloat(timer.progress))
+                            .stroke(
+                                AngularGradient(
+                                    gradient: Gradient(colors: [.blue, .purple, .pink, .blue]),
+                                    center: .center
+                                ),
+                                style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                            )
+                            .rotationEffect(.degrees(-90))
+                            .frame(width: 260, height: 260)
+                            .animation(.linear(duration: 1), value: timer.progress)
+
+                        // Time Text
+                        VStack(spacing: 4) {
+                            Text(timer.remaining.clockString)
+                                .font(.system(size: 64, weight: .bold, design: .rounded))
+                                .monospacedDigit()
+                                .foregroundStyle(.primary)
+                                .contentTransition(.numericText(countsDown: true))
+
+                            Text(timer.mode.rawValue.capitalized)
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 20)
 
                     progressDots
                         .padding(.top, 6)
 
                     controls
                         .padding(.top, 12)
-
-                    Text("Flow \(timer.flowDuration/60)m • Short \(timer.shortBreak/60)m • Long \(timer.longBreak/60)m")
-                        .foregroundStyle(.secondary)
-                        .font(.footnote)
-                        .padding(.top, 6)
                 }
                 Spacer()
             }
@@ -56,15 +87,18 @@ struct TimerView: View {
             Spacer()
             if isEditingTitle && timer.mode == .flow {
                 TextField("Flow", text: $titleDraft, onCommit: commitTitle)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 22, weight: .semibold))
-                    .frame(maxWidth: 240)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .padding(8)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    .frame(maxWidth: 280)
                     .focused($titleFocused)
                     .onSubmit { commitTitle() }
                     .onAppear { titleDraft = timer.displayTitle }
             } else {
                 Text(timer.displayTitle)
-                    .font(.system(size: 22, weight: .semibold))
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .accessibilityIdentifier("title")
                     .onTapGesture {
                         guard timer.mode == .flow else { return }
@@ -81,59 +115,83 @@ struct TimerView: View {
                 syncDurationsFromModel()
             } label: {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .frame(width: 34, height: 34)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color.secondary.opacity(0.12))
-                    )
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, height: 36)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 0.5))
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("settings")
+
+            // Focus Lock Button
+            Button {
+                showingFocusLock = true
+            } label: {
+                Image(systemName: "lock.shield.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, height: 36)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 0.5))
+            }
+            .buttonStyle(.plain)
+            .popover(isPresented: $showingFocusLock) {
+                FocusLockView()
+            }
+            
             Spacer()
         }
     }
 
     private var progressDots: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             ForEach(0..<4, id: \.self) { idx in
                 Circle()
-                    .fill(idx < timer.completedFlowsInCycle % 4 ? Color.primary.opacity(0.65) : Color.secondary.opacity(0.25))
-                    .frame(width: 9, height: 9)
+                    .fill(idx < timer.completedFlowsInCycle % 4 ? Color.primary.opacity(0.8) : Color.secondary.opacity(0.2))
+                    .frame(width: 8, height: 8)
+                    .animation(.spring, value: timer.completedFlowsInCycle)
             }
         }
     }
 
     private var controls: some View {
-        HStack(alignment: .center, spacing: 14) {
+        HStack(alignment: .center, spacing: 24) {
             Spacer()
+            
+            // Play/Pause Button
             Button {
-                timer.isRunning ? timer.pause() : timer.start()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    timer.isRunning ? timer.pause() : timer.start()
+                }
             } label: {
                 ZStack {
                     Circle()
-                        .fill(.ultraThickMaterial)
-                        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 6)
-                        .overlay(Circle().strokeBorder(Color.primary.opacity(0.08), lineWidth: 1))
+                        .fill(.ultraThinMaterial)
+                        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+                        .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 1))
+                    
                     Image(systemName: timer.isRunning ? "pause.fill" : "play.fill")
-                        .font(.system(size: 28, weight: .semibold))
-                        .foregroundStyle(.primary)
+                        .font(.system(size: 32, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
                 }
-                .frame(width: 86, height: 86)
+                .frame(width: 80, height: 80)
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("playpause")
 
+            // Reset Button
             Button {
-                timer.resetCurrentSession()
+                withAnimation { timer.resetCurrentSession() }
             } label: {
                 Image(systemName: "gobackward")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .frame(width: 42, height: 42)
-                    .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.secondary.opacity(0.12)))
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 44, height: 44)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 0.5))
             }
             .buttonStyle(.plain)
             .help("Reset current session")
