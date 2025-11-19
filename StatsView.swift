@@ -32,7 +32,7 @@ struct StatsView: View {
 
             if viewMode == .charts {
                 statsCard
-                    .padding(.top, 20)
+                    .padding(.top, -20)
                     .transition(.move(edge: .leading))
             } else {
                 CalendarHeatmapView(sessions: store.allSessions())
