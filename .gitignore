@@ -1,0 +1,30 @@
+# Build artifacts
+.build/
+build/
+*.dmg
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.so
+.Python
+
+# macOS
+.DS_Store
+*.swp
+*.swo
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.moved-aside
+
+# Data files
+*.csv

@@ -1,6 +1,7 @@
 import SwiftUI
 #if os(macOS)
 import AppKit
+import UniformTypeIdentifiers
 #endif
 
 struct TimerView: View {
@@ -10,7 +11,6 @@ struct TimerView: View {
     @State private var titleDraft: String = ""
     @FocusState private var titleFocused: Bool
     @State private var showingSettings: Bool = false
-    @State private var showingFocusLock: Bool = false
     @State private var flowMinutes: Double = 25
     @State private var shortMinutes: Double = 5
     @State private var longMinutes: Double = 30
@@ -57,7 +57,7 @@ struct TimerView: View {
                                 .foregroundStyle(.primary)
                                 .contentTransition(.numericText(countsDown: true))
 
-                            Text(timer.mode.rawValue.capitalized)
+                            Text(timer.mode.title)
                                 .font(.system(size: 16, weight: .medium, design: .rounded))
                                 .foregroundStyle(.secondary)
                         }
@@ -123,22 +123,6 @@ struct TimerView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("settings")
-
-            // Focus Lock Button
-            Button {
-                showingFocusLock = true
-            } label: {
-                Image(systemName: "lock.shield.fill")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 36, height: 36)
-                    .background(.ultraThinMaterial, in: Circle())
-                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 0.5))
-            }
-            .buttonStyle(.plain)
-            .popover(isPresented: $showingFocusLock) {
-                FocusLockView()
-            }
             
             Spacer()
         }
@@ -281,7 +265,7 @@ struct TimerView: View {
     private func importSessions() {
 #if os(macOS)
         let panel = NSOpenPanel()
-        panel.allowedFileTypes = ["json", "csv"]
+        panel.allowedContentTypes = [.json, .commaSeparatedText]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.begin { resp in

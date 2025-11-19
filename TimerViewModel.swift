@@ -33,6 +33,13 @@ final class TimerViewModel: ObservableObject {
     var currentDurationSeconds: Int { intendedSeconds() }
     var hasProgress: Bool { remaining < currentDurationSeconds }
 
+    var progress: Double {
+        let total = Double(intendedSeconds())
+        guard total > 0 else { return 0 }
+        let current = Double(remaining)
+        return 1.0 - (current / total)
+    }
+
     private let customTitleKey = "TimerView.sessionTitle"
     private var startTS: Date?
     private var tickCancellable: AnyCancellable?
