@@ -1,137 +1,27 @@
 import SwiftUI
-#if os(macOS)
-import AppKit
-#endif
 
 struct ContentView: View {
     @EnvironmentObject private var store: SessionStore
     @EnvironmentObject private var timer: TimerViewModel
 
     @State private var selectedTab: Int = 0 // 0 = Timer, 1 = Stats
-    @State private var window: NSWindow?
-#if os(macOS)
-    @State private var floatingReason: FloatingReason?
-    @State private var mainWindowHiddenForFloating: Bool = false
-    @State private var floatingManager = FloatingWindowManager()
-    @State private var windowDelegate = WindowEventHandler()
-#endif
+    @State private var showErrorBanner: Bool = false
 
     var body: some View {
-        ZStack {
-            MainView(selectedTab: $selectedTab)
-                .transition(.opacity)
-
-            WindowAccessor { win in
-                configureWindow(win)
-            }
-            .frame(width: 0, height: 0)
-        }
-        .onAppear { timer.attach(store: store) }
-        .overlay(alignment: .bottom) {
-            if let msg = store.lastErrorMessage, !msg.isEmpty {
-                ErrorBanner(text: msg)
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation { store.lastErrorMessage = nil }
+        MainView(selectedTab: $selectedTab)
+            .onAppear { timer.attach(store: store) }
+            .overlay(alignment: .bottom) {
+                if let msg = store.lastErrorMessage, !msg.isEmpty {
+                    ErrorBanner(text: msg)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                withAnimation { store.lastErrorMessage = nil }
+                            }
                         }
-                    }
+                }
             }
-        }
-#if os(macOS)
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-            appDidResignActive()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            appDidBecomeActive()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .flowRestoreMainWindow)) { _ in
-            restoreMainWindow()
-        }
-        .onChange(of: timer.floatOnBackground) { enabled in
-            if !enabled && floatingReason == .background {
-                floatingManager.hide()
-                floatingReason = nil
-            }
-        }
-#endif
     }
 }
-
-#if os(macOS)
-extension ContentView {
-    private enum FloatingReason {
-        case background
-        case userHidden
-    }
-
-    private func configureWindow(_ win: NSWindow?) {
-        guard let win else { return }
-        if window !== win {
-            window = win
-            win.delegate = windowDelegate
-            windowDelegate.closeRequested = { userInitiatedFloating() }
-            windowDelegate.miniaturizeRequested = { userInitiatedFloating() }
-        }
-    }
-
-    private func userInitiatedFloating() {
-        guard let win = window else { return }
-        mainWindowHiddenForFloating = true
-        win.orderOut(nil)
-        presentFloating(reason: .userHidden)
-    }
-
-    private func presentFloating(reason: FloatingReason) {
-        floatingReason = reason
-        floatingManager.show(for: timer) {
-            NotificationCenter.default.post(name: .flowRestoreMainWindow, object: nil)
-        }
-    }
-
-    private func restoreMainWindow() {
-        floatingManager.hide()
-        floatingReason = nil
-        if let win = window {
-            win.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-        }
-        mainWindowHiddenForFloating = false
-    }
-
-    private func appDidResignActive() {
-        guard floatingReason != .userHidden else { return }
-        
-        // Show floating window if: (1) float on background is enabled, OR (2) timer is actively running
-        if timer.floatOnBackground || timer.isRunning {
-            // IMPORTANT: Hide the main window so we don't have 2 windows visible
-            // We don't set mainWindowHiddenForFloating = true because that implies USER action
-            // We just want to temporarily hide it while backgrounded
-            window?.orderOut(nil)
-            presentFloating(reason: .background)
-        }
-    }
-
-    private func appDidBecomeActive() {
-        if mainWindowHiddenForFloating {
-            restoreMainWindow()
-        } else if floatingReason == .background {
-            // Do NOT automatically restore main window if we are in background floating mode.
-            // This prevents single-click on floating window from restoring the main app.
-            // The user must explicitly double-click or use the expand button to restore.
-            
-            // However, if the user Cmd-Tabs to the app, they might expect the main window.
-            // But we prioritize the "don't expand on drag/click" requirement.
-            // If the main window was hidden in appDidResignActive, it stays hidden.
-        }
-    }
-}
-#else
-extension ContentView {
-    private func configureWindow(_ win: NSWindow?) {
-        self.window = win
-    }
-}
-#endif
 
 struct MainView: View {
     @Binding var selectedTab: Int

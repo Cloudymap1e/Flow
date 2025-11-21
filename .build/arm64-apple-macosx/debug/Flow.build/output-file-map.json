@@ -26,6 +26,12 @@
     "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView~partial.swiftmodule",
     "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swiftdeps"
   },
+  "/Users/rc/Documents/Flow/MiniTimerWindow.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.d",
+    "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swiftdeps"
+  },
   "/Users/rc/Documents/Flow/Models.swift": {
     "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.d",
     "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swift.o",

@@ -53,6 +53,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/MiniTimerWindow.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/Models.swift"
         },
         {
@@ -104,6 +108,7 @@
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/SessionStore.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/StatsView.swift.o",
@@ -184,6 +189,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.swift.o"
         },
         {
@@ -225,6 +234,7 @@
         "/Users/rc/Documents/Flow/ContentView.swift",
         "/Users/rc/Documents/Flow/LearningTimerApp.swift",
         "/Users/rc/Documents/Flow/MiniTimerView.swift",
+        "/Users/rc/Documents/Flow/MiniTimerWindow.swift",
         "/Users/rc/Documents/Flow/Models.swift",
         "/Users/rc/Documents/Flow/SessionStore.swift",
         "/Users/rc/Documents/Flow/StatsView.swift",
@@ -254,6 +264,7 @@
       "/Users/rc/Documents/Flow/ContentView.swift",
       "/Users/rc/Documents/Flow/LearningTimerApp.swift",
       "/Users/rc/Documents/Flow/MiniTimerView.swift",
+      "/Users/rc/Documents/Flow/MiniTimerWindow.swift",
       "/Users/rc/Documents/Flow/Models.swift",
       "/Users/rc/Documents/Flow/SessionStore.swift",
       "/Users/rc/Documents/Flow/StatsView.swift",
@@ -371,6 +382,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/MiniTimerWindow.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/Models.swift"
         },
         {
@@ -430,6 +445,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swift.o"
         },
         {
           "kind" : "file",
