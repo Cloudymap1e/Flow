@@ -62,8 +62,8 @@ private final class FloatingTimerWindowController: NSWindowController, NSWindowD
         guard let window = window else { return }
         ensureFrameVisible(window)
         window.alphaValue = 1
+        window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: false)
     }
 
     func update(timer: TimerViewModel, expandAction: @escaping () -> Void) {
@@ -116,13 +116,13 @@ private final class FloatingTimerPanel: NSPanel {
             styleMask: [.borderless],
             backing: .buffered,
             defer: false)
-        level = .statusBar
+        level = .floating
         isOpaque = false
         backgroundColor = .clear
         hasShadow = false
         hidesOnDeactivate = false
         isMovableByWindowBackground = true
-        collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
+        collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle, .moveToActiveSpace]
         titleVisibility = .hidden
         titlebarAppearsTransparent = true
         standardWindowButton(.closeButton)?.isHidden = true

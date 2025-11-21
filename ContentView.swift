@@ -1,36 +1,34 @@
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 struct ContentView: View {
     @EnvironmentObject private var store: SessionStore
     @EnvironmentObject private var timer: TimerViewModel
 
     @State private var selectedTab: Int = 0 // 0 = Timer, 1 = Stats
-    @State private var showErrorBanner: Bool = false
-    
-    // Window Management
-    @State private var isFloating: Bool = false
-    @State private var originalFrame: NSRect?
     @State private var window: NSWindow?
+#if os(macOS)
+    @State private var floatingReason: FloatingReason?
+    @State private var mainWindowHiddenForFloating: Bool = false
+    @State private var floatingManager = FloatingWindowManager()
+    @State private var windowDelegate = WindowEventHandler()
+#endif
 
     var body: some View {
         ZStack {
-            if isFloating {
-                MiniTimerView()
-                    .transition(.opacity)
-            } else {
-                MainView(selectedTab: $selectedTab)
-                    .transition(.opacity)
-            }
-            
-            // Hidden window accessor to capture the window instance
+            MainView(selectedTab: $selectedTab)
+                .transition(.opacity)
+
             WindowAccessor { win in
-                self.window = win
+                configureWindow(win)
             }
             .frame(width: 0, height: 0)
         }
         .onAppear { timer.attach(store: store) }
         .overlay(alignment: .bottom) {
-            if let msg = store.lastErrorMessage, !msg.isEmpty, !isFloating {
+            if let msg = store.lastErrorMessage, !msg.isEmpty {
                 ErrorBanner(text: msg)
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -39,59 +37,92 @@ struct ContentView: View {
                     }
             }
         }
+#if os(macOS)
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-            if timer.floatOnBackground && !isFloating {
-                startFloating()
-            }
+            appDidResignActive()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            if isFloating {
-                stopFloating()
+            appDidBecomeActive()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .flowRestoreMainWindow)) { _ in
+            restoreMainWindow()
+        }
+        .onChange(of: timer.floatOnBackground) { enabled in
+            if !enabled && floatingReason == .background {
+                floatingManager.hide()
+                floatingReason = nil
             }
         }
-    }
-    
-    private func startFloating() {
-        guard let win = window else { return }
-        
-        // Save original frame
-        originalFrame = win.frame
-        
-        // Calculate new frame (bottom right corner, small size)
-        let screenFrame = win.screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
-        let newSize = CGSize(width: 250, height: 120)
-        let newOrigin = CGPoint(
-            x: screenFrame.maxX - newSize.width - 20,
-            y: screenFrame.minY + 20
-        )
-        
-        let newFrame = NSRect(origin: newOrigin, size: newSize)
-        
-        withAnimation(.easeInOut(duration: 0.3)) {
-            isFloating = true
-        }
-        
-        win.level = .floating
-        win.styleMask.remove(.resizable)
-        win.styleMask.remove(.miniaturizable)
-        win.setFrame(newFrame, display: true, animate: true)
-        win.isMovableByWindowBackground = true
-    }
-    
-    private func stopFloating() {
-        guard let win = window, let original = originalFrame else { return }
-        
-        withAnimation(.easeInOut(duration: 0.3)) {
-            isFloating = false
-        }
-        
-        win.level = .normal
-        win.styleMask.insert(.resizable)
-        win.styleMask.insert(.miniaturizable)
-        win.setFrame(original, display: true, animate: true)
-        win.isMovableByWindowBackground = false
+#endif
     }
 }
+
+#if os(macOS)
+extension ContentView {
+    private enum FloatingReason {
+        case background
+        case userHidden
+    }
+
+    private func configureWindow(_ win: NSWindow?) {
+        guard let win else { return }
+        if window !== win {
+            window = win
+            win.delegate = windowDelegate
+            windowDelegate.closeRequested = { userInitiatedFloating() }
+            windowDelegate.miniaturizeRequested = { userInitiatedFloating() }
+        }
+    }
+
+    private func userInitiatedFloating() {
+        guard let win = window else { return }
+        if !mainWindowHiddenForFloating {
+            mainWindowHiddenForFloating = true
+            win.orderOut(nil)
+        }
+        presentFloating(reason: .userHidden)
+    }
+
+    private func presentFloating(reason: FloatingReason) {
+        floatingReason = reason
+        floatingManager.show(for: timer) {
+            NotificationCenter.default.post(name: .flowRestoreMainWindow, object: nil)
+        }
+    }
+
+    private func restoreMainWindow() {
+        floatingManager.hide()
+        floatingReason = nil
+        if let win = window {
+            win.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+        }
+        mainWindowHiddenForFloating = false
+    }
+
+    private func appDidResignActive() {
+        guard floatingReason != .userHidden else { return }
+        // Show floating window if: (1) float on background is enabled, OR (2) timer is actively running
+        guard timer.floatOnBackground || timer.isRunning else { return }
+        presentFloating(reason: .background)
+    }
+
+    private func appDidBecomeActive() {
+        if mainWindowHiddenForFloating {
+            restoreMainWindow()
+        } else if floatingReason == .background {
+            floatingManager.hide()
+            floatingReason = nil
+        }
+    }
+}
+#else
+extension ContentView {
+    private func configureWindow(_ win: NSWindow?) {
+        self.window = win
+    }
+}
+#endif
 
 struct MainView: View {
     @Binding var selectedTab: Int
