@@ -6,8 +6,10 @@ import AppKit
 class MiniTimerWindowCoordinator: ObservableObject {
     static let shared = MiniTimerWindowCoordinator()
     
-    private var miniWindow: NSWindow?
+    private var miniPanel: NSPanel?
+    private var hostingController: NSHostingController<AnyView>?
     @Published var isMiniTimerShowing = false
+    var timer: TimerViewModel?
     
     private init() {
         // Listen for window close notifications
@@ -26,40 +28,70 @@ class MiniTimerWindowCoordinator: ObservableObject {
         guard let window = notification.object as? NSWindow else { return }
         
         // Check if main window is closing (not the mini timer)
-        let isMiniTimer = window.identifier?.rawValue == "miniTimer"
+        let isMiniTimer = miniPanel != nil && window == miniPanel
         
         if !isMiniTimer {
-            // Main window is closing, show mini timer after a delay
+            // Main window is closing, show mini timer immediately
             Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
-                self.openMiniTimerWindow()
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+                self.showMiniTimer()
             }
         } else {
             // Mini timer is closing
             isMiniTimerShowing = false
-            miniWindow = nil
+            miniPanel = nil
+            hostingController = nil
         }
     }
     
-    func openMiniTimerWindow() {
-        guard !isMiniTimerShowing else { return }
+    func showMiniTimer() {
+        guard !isMiniTimerShowing, let timer = timer else { return }
         
-        // Post notification to open mini timer window
-        NotificationCenter.default.post(name: Notification.Name("OpenMiniTimerWindow"), object: nil)
-        
-        // Mark as showing
-        isMiniTimerShowing = true
-        
-        // Find the window after a delay
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 400_000_000) // 0.4 seconds
-            self.findMiniWindow()
+        // Create the mini timer panel if it doesn't exist
+        if miniPanel == nil {
+            createMiniTimerPanel(timer: timer)
         }
+        
+        // Show the panel
+        miniPanel?.orderFrontRegardless()
+        miniPanel?.makeKeyAndOrderFront(nil)
+        isMiniTimerShowing = true
+    }
+    
+    private func createMiniTimerPanel(timer: TimerViewModel) {
+        // Create hosting controller with mini timer view
+        let view = AnyView(
+            MiniTimerView()
+                .environmentObject(timer)
+                .frame(width: 280, height: 80)
+        )
+        let hosting = NSHostingController(rootView: view)
+        self.hostingController = hosting
+        
+        // Create floating panel
+        let panel = NSPanel(
+            contentRect: NSRect(x: 0, y: 0, width: 280, height: 80),
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        
+        panel.contentViewController = hosting
+        panel.level = .floating
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = true
+        panel.hidesOnDeactivate = false
+        panel.isMovableByWindowBackground = true
+        panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
+        
+        self.miniPanel = panel
     }
     
     func hideMiniTimer() {
-        miniWindow?.close()
-        miniWindow = nil
+        miniPanel?.close()
+        miniPanel = nil
+        hostingController = nil
         isMiniTimerShowing = false
     }
     
@@ -69,7 +101,7 @@ class MiniTimerWindowCoordinator: ObservableObject {
         
         // Look for existing main window
         for window in NSApp.windows {
-            let isMiniTimer = window.identifier?.rawValue == "miniTimer"
+            let isMiniTimer = miniPanel != nil && window == miniPanel
             if !isMiniTimer && window.isVisible {
                 window.makeKeyAndOrderFront(nil)
                 hideMiniTimer()
@@ -77,23 +109,8 @@ class MiniTimerWindowCoordinator: ObservableObject {
             }
         }
         
-        // If no main window, open a new one
-        NotificationCenter.default.post(name: Notification.Name("OpenMainWindow"), object: nil)
-        
-        // Close mini timer
+        // If no main window exists, hide mini timer and let user reopen app
         hideMiniTimer()
-    }
-    
-    private func findMiniWindow() {
-        // Find and configure the mini timer window
-        for window in NSApp.windows {
-            if window.identifier?.rawValue == "miniTimer" {
-                miniWindow = window
-                // Ensure it doesn't hide when deactivated
-                window.hidesOnDeactivate = false
-                break
-            }
-        }
     }
 }
 
@@ -104,5 +121,8 @@ struct MiniTimerWindowView: View {
     var body: some View {
         MiniTimerView()
             .environmentObject(timer)
+            .onAppear {
+                MiniTimerWindowCoordinator.shared.timer = timer
+            }
     }
 }
