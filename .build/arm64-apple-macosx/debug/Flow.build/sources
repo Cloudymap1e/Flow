@@ -1,5 +1,8 @@
+/Users/rc/Documents/Flow/AlertManager.swift
 /Users/rc/Documents/Flow/AppCommands.swift
 /Users/rc/Documents/Flow/ContentView.swift
+/Users/rc/Documents/Flow/FloatingWindowManager.swift
+/Users/rc/Documents/Flow/FlowNotifications.swift
 /Users/rc/Documents/Flow/LearningTimerApp.swift
 /Users/rc/Documents/Flow/MiniTimerView.swift
 /Users/rc/Documents/Flow/MiniTimerWindow.swift
@@ -9,5 +12,6 @@
 /Users/rc/Documents/Flow/TimerView.swift
 /Users/rc/Documents/Flow/TimerViewModel.swift
 /Users/rc/Documents/Flow/WindowAccessor.swift
+/Users/rc/Documents/Flow/WindowEventHandler.swift
 /Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift
 /Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift

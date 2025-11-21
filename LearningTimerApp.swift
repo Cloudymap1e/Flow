@@ -37,15 +37,7 @@ struct LearningTimerApp: App {
                     window.isMovableByWindowBackground = true
                     window.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
                     window.identifier = NSUserInterfaceItemIdentifier("miniTimer")
-                    
-                    // Position in bottom-right corner
-                    if let screen = window.screen ?? NSScreen.main {
-                        let screenFrame = screen.visibleFrame
-                        let windowSize = window.frame.size
-                        let x = screenFrame.maxX - windowSize.width - 20
-                        let y = screenFrame.minY + 20
-                        window.setFrameOrigin(NSPoint(x: x, y: y))
-                    }
+                    window.hidesOnDeactivate = false
                 })
         }
         .windowResizability(.contentSize)

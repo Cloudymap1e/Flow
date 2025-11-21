@@ -37,11 +37,23 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/AlertManager.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/AppCommands.swift"
         },
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/FloatingWindowManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/FlowNotifications.swift"
         },
         {
           "kind" : "file",
@@ -81,6 +93,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/WindowEventHandler.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift"
         },
         {
@@ -104,8 +120,11 @@
       "moduleName" : "Flow",
       "moduleOutputPath" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Modules/Flow.swiftmodule",
       "objects" : [
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/AlertManager.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FloatingWindowManager.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FlowNotifications.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/LearningTimerApp.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swift.o",
@@ -115,6 +134,7 @@
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerView.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/TimerViewModel.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.swift.o",
+        "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowEventHandler.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.swift.o",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/resource_bundle_accessor.swift.o"
       ],
@@ -173,11 +193,23 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/AlertManager.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands.swift.o"
         },
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FloatingWindowManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FlowNotifications.swift.o"
         },
         {
           "kind" : "file",
@@ -217,6 +249,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowEventHandler.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/GeneratedAssetSymbols.swift.o"
         },
         {
@@ -230,8 +266,11 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/rc/Documents/Flow/AlertManager.swift",
         "/Users/rc/Documents/Flow/AppCommands.swift",
         "/Users/rc/Documents/Flow/ContentView.swift",
+        "/Users/rc/Documents/Flow/FloatingWindowManager.swift",
+        "/Users/rc/Documents/Flow/FlowNotifications.swift",
         "/Users/rc/Documents/Flow/LearningTimerApp.swift",
         "/Users/rc/Documents/Flow/MiniTimerView.swift",
         "/Users/rc/Documents/Flow/MiniTimerWindow.swift",
@@ -241,6 +280,7 @@
         "/Users/rc/Documents/Flow/TimerView.swift",
         "/Users/rc/Documents/Flow/TimerViewModel.swift",
         "/Users/rc/Documents/Flow/WindowAccessor.swift",
+        "/Users/rc/Documents/Flow/WindowEventHandler.swift",
         "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift",
         "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift"
       ],
@@ -260,8 +300,11 @@
       "flow",
       "-incremental",
       "-c",
+      "/Users/rc/Documents/Flow/AlertManager.swift",
       "/Users/rc/Documents/Flow/AppCommands.swift",
       "/Users/rc/Documents/Flow/ContentView.swift",
+      "/Users/rc/Documents/Flow/FloatingWindowManager.swift",
+      "/Users/rc/Documents/Flow/FlowNotifications.swift",
       "/Users/rc/Documents/Flow/LearningTimerApp.swift",
       "/Users/rc/Documents/Flow/MiniTimerView.swift",
       "/Users/rc/Documents/Flow/MiniTimerWindow.swift",
@@ -271,6 +314,7 @@
       "/Users/rc/Documents/Flow/TimerView.swift",
       "/Users/rc/Documents/Flow/TimerViewModel.swift",
       "/Users/rc/Documents/Flow/WindowAccessor.swift",
+      "/Users/rc/Documents/Flow/WindowEventHandler.swift",
       "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift",
       "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/DerivedSources/resource_bundle_accessor.swift",
       "-I",
@@ -366,11 +410,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/AlertManager.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/AppCommands.swift"
         },
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/FloatingWindowManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/FlowNotifications.swift"
         },
         {
           "kind" : "file",
@@ -410,6 +466,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/WindowEventHandler.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/build/Build/Intermediates.noindex/Flow.build/Release/Flow.build/DerivedSources/GeneratedAssetSymbols.swift"
         },
         {
@@ -428,11 +488,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/AlertManager.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/AppCommands.swift.o"
         },
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FloatingWindowManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FlowNotifications.swift.o"
         },
         {
           "kind" : "file",
@@ -473,6 +545,10 @@
         {
           "kind" : "file",
           "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowAccessor.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/WindowEventHandler.swift.o"
         },
         {
           "kind" : "file",
