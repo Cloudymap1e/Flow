@@ -76,10 +76,8 @@ extension ContentView {
 
     private func userInitiatedFloating() {
         guard let win = window else { return }
-        if !mainWindowHiddenForFloating {
-            mainWindowHiddenForFloating = true
-            win.orderOut(nil)
-        }
+        mainWindowHiddenForFloating = true
+        win.orderOut(nil)
         presentFloating(reason: .userHidden)
     }
 
@@ -102,17 +100,28 @@ extension ContentView {
 
     private func appDidResignActive() {
         guard floatingReason != .userHidden else { return }
+        
         // Show floating window if: (1) float on background is enabled, OR (2) timer is actively running
-        guard timer.floatOnBackground || timer.isRunning else { return }
-        presentFloating(reason: .background)
+        if timer.floatOnBackground || timer.isRunning {
+            // IMPORTANT: Hide the main window so we don't have 2 windows visible
+            // We don't set mainWindowHiddenForFloating = true because that implies USER action
+            // We just want to temporarily hide it while backgrounded
+            window?.orderOut(nil)
+            presentFloating(reason: .background)
+        }
     }
 
     private func appDidBecomeActive() {
         if mainWindowHiddenForFloating {
             restoreMainWindow()
         } else if floatingReason == .background {
-            floatingManager.hide()
-            floatingReason = nil
+            // Do NOT automatically restore main window if we are in background floating mode.
+            // This prevents single-click on floating window from restoring the main app.
+            // The user must explicitly double-click or use the expand button to restore.
+            
+            // However, if the user Cmd-Tabs to the app, they might expect the main window.
+            // But we prioritize the "don't expand on drag/click" requirement.
+            // If the main window was hidden in appDidResignActive, it stays hidden.
         }
     }
 }
