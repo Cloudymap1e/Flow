@@ -20,6 +20,12 @@
     "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView~partial.swiftmodule",
     "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/ContentView.swiftdeps"
   },
+  "/Users/rc/Documents/Flow/FloatingWindowManager.swift": {
+    "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FloatingWindowManager.d",
+    "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FloatingWindowManager.swift.o",
+    "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FloatingWindowManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FloatingWindowManager.swiftdeps"
+  },
   "/Users/rc/Documents/Flow/FlowNotifications.swift": {
     "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FlowNotifications.d",
     "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/FlowNotifications.swift.o",
@@ -37,12 +43,6 @@
     "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swift.o",
     "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView~partial.swiftmodule",
     "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerView.swiftdeps"
-  },
-  "/Users/rc/Documents/Flow/MiniTimerWindow.swift": {
-    "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.d",
-    "object": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swift.o",
-    "swiftmodule": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow~partial.swiftmodule",
-    "swift-dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/MiniTimerWindow.swiftdeps"
   },
   "/Users/rc/Documents/Flow/Models.swift": {
     "dependencies": "/Users/rc/Documents/Flow/.build/arm64-apple-macosx/debug/Flow.build/Models.d",

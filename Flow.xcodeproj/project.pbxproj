@@ -11,7 +11,6 @@
 		1A6BE3ABCD1585753940AFBC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4D2ECBB791006E3E0E /* StatsView.swift */; };
 		32AD9530DC1E09460339CF37 /* LearningTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */; };
 		40C824D37012982788A4583D /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4E2ECBB7A1006E3E0E /* AppCommands.swift */; };
-		51A85EA62ECE04860033FEC2 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA42ECE04860033FEC2 /* Package.swift */; };
 		51A85EA72ECE04860033FEC2 /* MiniTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */; };
 		51A85EA82ECE04860033FEC2 /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA52ECE04860033FEC2 /* WindowAccessor.swift */; };
 		51E23B9E2ECDAEB90054BB0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */; };
@@ -19,6 +18,10 @@
 		9350A83623204DB7C49F24E8 /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4A2ECBB76D006E3E0E /* TimerViewModel.swift */; };
 		9BCFD6CEB648CF32EE75DF18 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF492ECBB75C006E3E0E /* SessionStore.swift */; };
 		FCCBCF317CB40E86D46551B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4B2ECBB779006E3E0E /* ContentView.swift */; };
+		C0DE00012345678900000001 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000011 /* AlertManager.swift */; };
+		C0DE00012345678900000002 /* FlowNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000012 /* FlowNotifications.swift */; };
+		C0DE00012345678900000003 /* FloatingWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000013 /* FloatingWindowManager.swift */; };
+		C0DE00012345678900000004 /* WindowEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000014 /* WindowEventHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +59,10 @@
 		51A85EA92ECE04B50033FEC2 /* Flow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flow.entitlements; sourceTree = "<group>"; };
 		51A85EAA2ECE04B50033FEC2 /* Flow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Flow.xcodeproj; sourceTree = "<group>"; };
 		51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C0DE00012345678900000011 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
+		C0DE00012345678900000012 /* FlowNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowNotifications.swift; sourceTree = "<group>"; };
+		C0DE00012345678900000013 /* FloatingWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindowManager.swift; sourceTree = "<group>"; };
+		C0DE00012345678900000014 /* WindowEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowEventHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +98,10 @@
 				51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */,
 				51A85EA42ECE04860033FEC2 /* Package.swift */,
 				51A85EA52ECE04860033FEC2 /* WindowAccessor.swift */,
+				C0DE00012345678900000011 /* AlertManager.swift */,
+				C0DE00012345678900000013 /* FloatingWindowManager.swift */,
+				C0DE00012345678900000012 /* FlowNotifications.swift */,
+				C0DE00012345678900000014 /* WindowEventHandler.swift */,
 				51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */,
 				516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */,
 				516FAF482ECBB749006E3E0E /* Models.swift */,
@@ -262,8 +273,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				32AD9530DC1E09460339CF37 /* LearningTimerApp.swift in Sources */,
+				C0DE00012345678900000002 /* FlowNotifications.swift in Sources */,
+				C0DE00012345678900000001 /* AlertManager.swift in Sources */,
+				C0DE00012345678900000003 /* FloatingWindowManager.swift in Sources */,
+				C0DE00012345678900000004 /* WindowEventHandler.swift in Sources */,
 				548E8EBDC7F59B434050AE35 /* Models.swift in Sources */,
-				51A85EA62ECE04860033FEC2 /* Package.swift in Sources */,
 				51A85EA72ECE04860033FEC2 /* MiniTimerView.swift in Sources */,
 				51A85EA82ECE04860033FEC2 /* WindowAccessor.swift in Sources */,
 				9BCFD6CEB648CF32EE75DF18 /* SessionStore.swift in Sources */,

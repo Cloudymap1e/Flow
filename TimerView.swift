@@ -15,6 +15,11 @@ struct TimerView: View {
     @State private var shortMinutes: Double = 5
     @State private var longMinutes: Double = 30
     @State private var validationMessage: String?
+#if os(macOS)
+    @State private var showingSoundImporter: Bool = false
+    @State private var soundImportMessage: String?
+    @State private var soundImportIsError: Bool = false
+#endif
 
     var body: some View {
         ZStack {
@@ -79,6 +84,22 @@ struct TimerView: View {
         .onChange(of: titleFocused) { isFocused in
             if !isFocused && isEditingTitle { commitTitle() }
         }
+#if os(macOS)
+        .fileImporter(
+            isPresented: $showingSoundImporter,
+            allowedContentTypes: [.audio],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                guard let url = urls.first else { return }
+                handleSoundSelection(url: url)
+            case .failure:
+                soundImportIsError = true
+                soundImportMessage = "Unable to access the selected file."
+            }
+        }
+#endif
     }
 
     // MARK: Components
@@ -180,6 +201,32 @@ struct TimerView: View {
             .buttonStyle(.plain)
             .help("Reset current session")
             .accessibilityIdentifier("reset")
+
+            if timer.isAlarmRinging {
+                Button {
+                    timer.stopAlarmSound()
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.red, .orange],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .shadow(color: Color.red.opacity(0.25), radius: 10, x: 0, y: 5)
+
+                        Image(systemName: "speaker.slash.fill")
+                            .font(.system(size: 26, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 70, height: 70)
+                }
+                .buttonStyle(.plain)
+                .help("Stop alert sound")
+                .accessibilityIdentifier("stopAlertSound")
+            }
             Spacer()
         }
     }
@@ -197,6 +244,13 @@ struct TimerView: View {
             settingsRow(title: "Flow", binding: $flowMinutes)
             settingsRow(title: "Short Break", binding: $shortMinutes)
             settingsRow(title: "Long Break", binding: $longMinutes)
+
+#if os(macOS)
+            Divider()
+                .padding(.top, 4)
+
+            soundSettingsSection
+#endif
             
             Toggle("Float when backgrounded", isOn: $timer.floatOnBackground)
                 .padding(.vertical, 4)
@@ -285,4 +339,49 @@ struct TimerView: View {
         }
 #endif
     }
+
+#if os(macOS)
+    private var soundSettingsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Alert Sound")
+                .font(.headline)
+            HStack {
+                Label(timer.alertSoundDescription, systemImage: timer.hasCustomAlertSound ? "music.note" : "speaker.wave.2.fill")
+                Spacer()
+                Button("Choose File…") {
+                    soundImportMessage = nil
+                    soundImportIsError = false
+                    showingSoundImporter = true
+                }
+            }
+            if timer.hasCustomAlertSound {
+                Button("Use Default Sound") {
+                    timer.clearCustomAlertSoundSelection()
+                    soundImportMessage = "Reverted to default alert."
+                    soundImportIsError = false
+                }
+                .buttonStyle(.borderless)
+            }
+            if let message = soundImportMessage {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(soundImportIsError ? Color.red : Color.secondary)
+            }
+        }
+    }
+
+    private func handleSoundSelection(url: URL) {
+        let access = url.startAccessingSecurityScopedResource()
+        defer {
+            if access { url.stopAccessingSecurityScopedResource() }
+        }
+        if timer.applyCustomAlertSound(url: url) {
+            soundImportIsError = false
+            soundImportMessage = "Using \(url.lastPathComponent)"
+        } else {
+            soundImportIsError = true
+            soundImportMessage = "Could not load \(url.lastPathComponent). Using default alert."
+        }
+    }
+#endif
 }

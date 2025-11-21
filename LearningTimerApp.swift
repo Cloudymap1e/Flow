@@ -4,7 +4,12 @@ import SwiftUI
 struct LearningTimerApp: App {
     @StateObject private var store = SessionStore()
     @StateObject private var timerVM = TimerViewModel()
-    @StateObject private var coordinator = MiniTimerWindowCoordinator.shared
+
+    init() {
+#if os(macOS)
+        AlertManager.shared.requestAuthorization()
+#endif
+    }
 
     var body: some Scene {
         WindowGroup(id: "main") {
@@ -19,53 +24,27 @@ struct LearningTimerApp: App {
         .commands {
             AppCommands(store: store, timer: timerVM)
         }
-        
-        // Mini Timer Window - always on top floating window
-        WindowGroup(id: "miniTimer") {
-            MiniTimerWindowContent()
-                .environmentObject(store)
-                .environmentObject(timerVM)
-                .frame(width: 280, height: 80)
-                .background(WindowAccessor { window in
-                    guard let window = window else { return }
-                    
-                    window.level = .floating
-                    window.styleMask.remove(.resizable)
-                    window.styleMask.remove(.miniaturizable)
-                    window.titleVisibility = .hidden
-                    window.titlebarAppearsTransparent = true
-                    window.isMovableByWindowBackground = true
-                    window.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
-                    window.identifier = NSUserInterfaceItemIdentifier("miniTimer")
-                    window.hidesOnDeactivate = false
-                })
-        }
-        .windowResizability(.contentSize)
-        .defaultSize(width: 280, height: 80)
     }
 }
 
 // Helper view to handle window opening notifications
 struct MainWindowContent: View {
     @Environment(\.openWindow) private var openWindow
+    @EnvironmentObject private var timer: TimerViewModel
     
     var body: some View {
         ContentView()
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("OpenMainWindow"))) { _ in
+            .background(WindowAccessor { window in
+                FloatingWindowManager.shared.configure(mainWindow: window, timer: timer)
+            })
+            .onAppear {
+                FloatingWindowManager.shared.setFloatingEnabled(timer.floatOnBackground)
+            }
+            .onChange(of: timer.floatOnBackground) { newValue in
+                FloatingWindowManager.shared.setFloatingEnabled(newValue)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .flowOpenMainWindow)) { _ in
                 openWindow(id: "main")
             }
     }
 }
-
-// Helper view for mini timer
-struct MiniTimerWindowContent: View {
-    @Environment(\.openWindow) private var openWindow
-    
-    var body: some View {
-        MiniTimerWindowView()
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("OpenMiniTimerWindow"))) { _ in
-                openWindow(id: "miniTimer")
-            }
-    }
-}
-

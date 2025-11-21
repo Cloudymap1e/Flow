@@ -27,6 +27,10 @@ final class TimerViewModel: ObservableObject {
     @Published private(set) var isRunning: Bool = false
     @Published private(set) var remaining: Int = 25 * 60
     @Published private(set) var sessionTitle: String
+    @Published private(set) var isAlarmRinging: Bool = false
+#if os(macOS)
+    @AppStorage("TimerView.alertSoundPath") private var alertSoundPath: String = ""
+#endif
 
     var displayTitle: String {
         mode == .flow ? sessionTitle : mode.title
@@ -54,12 +58,23 @@ final class TimerViewModel: ObservableObject {
         let storedTitle = UserDefaults.standard.string(forKey: customTitleKey) ?? "Flow"
         self.sessionTitle = storedTitle
         self.remaining = flowDuration
+#if os(macOS)
+        if let url = customAlertSoundURL {
+            if !AlertManager.shared.setCustomSound(url: url) {
+                alertSoundPath = ""
+                AlertManager.shared.setCustomSound(url: nil)
+            }
+        } else {
+            AlertManager.shared.setCustomSound(url: nil)
+        }
+#endif
     }
 
     func attach(store: SessionStore) { self.store = store }
 
     // MARK: Controls
     func start() {
+        stopAlarmSound()
         guard !isRunning else { return }
         isRunning = true
         if startTS == nil { startTS = Date() }
@@ -74,6 +89,7 @@ final class TimerViewModel: ObservableObject {
     }
 
     func stopAndSavePartial() {
+        stopAlarmSound()
         // If we have elapsed > 0, persist as a partial session.
         let elapsed = intendedSeconds() - remaining
         if elapsed > 0 {
@@ -83,15 +99,28 @@ final class TimerViewModel: ObservableObject {
     }
 
     func complete() {
+        let finishedMode = mode
+        let upcomingMode = nextMode(afterCompleting: finishedMode)
         persistSession(actualSeconds: intendedSeconds())
         // Advance cycle logic
         if mode == .flow {
             completedFlowsInCycle += 1
         }
+#if os(macOS)
+        AlertManager.shared.deliverCompletionAlert(
+            finishedMode: finishedMode,
+            nextMode: upcomingMode,
+            flowTitle: sessionTitle,
+            volume: 1,
+            shouldLoop: true
+        )
+#endif
+        isAlarmRinging = true
         advanceModeAfterCompletion()
     }
 
     func resetToFlow() {
+        stopAlarmSound()
         mode = .flow
         remaining = flowDuration
         isRunning = false
@@ -100,6 +129,7 @@ final class TimerViewModel: ObservableObject {
     }
 
     func resetCurrentSession() {
+        stopAlarmSound()
         pause()
         startTS = nil
         remaining = intendedSeconds()
@@ -111,6 +141,43 @@ final class TimerViewModel: ObservableObject {
         sessionTitle = sanitized
         UserDefaults.standard.set(sanitized, forKey: customTitleKey)
     }
+
+    func stopAlarmSound() {
+#if os(macOS)
+        AlertManager.shared.stopSound()
+#endif
+        isAlarmRinging = false
+    }
+
+#if os(macOS)
+    var hasCustomAlertSound: Bool { customAlertSoundURL != nil }
+
+    var alertSoundDescription: String {
+        if let url = customAlertSoundURL {
+            return url.lastPathComponent
+        }
+        return "Funk (Default)"
+    }
+
+    @discardableResult
+    func applyCustomAlertSound(url: URL) -> Bool {
+        if AlertManager.shared.setCustomSound(url: url) {
+            alertSoundPath = url.path
+            return true
+        }
+        return false
+    }
+
+    func clearCustomAlertSoundSelection() {
+        alertSoundPath = ""
+        AlertManager.shared.setCustomSound(url: nil)
+    }
+
+    private var customAlertSoundURL: URL? {
+        guard !alertSoundPath.isEmpty else { return nil }
+        return URL(fileURLWithPath: alertSoundPath)
+    }
+#endif
 
     // MARK: Internal
     private func tick() {
@@ -163,6 +230,20 @@ final class TimerViewModel: ObservableObject {
         }
         startTS = nil
         remaining = intendedSeconds()
+    }
+
+    private func nextMode(afterCompleting finishedMode: Mode) -> Mode {
+        switch finishedMode {
+        case .flow:
+            let nextCount = completedFlowsInCycle + 1
+            if nextCount > 0 && nextCount % 4 == 0 {
+                return .longBreak
+            } else {
+                return .shortBreak
+            }
+        case .shortBreak, .longBreak:
+            return .flow
+        }
     }
 
     // Called when durations change via menu

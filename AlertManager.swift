@@ -5,29 +5,23 @@ import UserNotifications
 
 final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
     static let shared = AlertManager()
-    private let center = UNUserNotificationCenter.current()
-    private lazy var sound: NSSound? = {
-        if let hero = NSSound(named: NSSound.Name("Hero")) {
-            hero.loops = false
-            return hero
-        }
-        if let bundled = Bundle.main.url(forResource: "FlowComplete", withExtension: "aiff"),
-           let snd = NSSound(contentsOf: bundled, byReference: true) {
-            snd.loops = false
-            return snd
-        }
-        let systemURL = URL(fileURLWithPath: "/System/Library/Sounds/Basso.aiff")
-        let snd = NSSound(contentsOf: systemURL, byReference: true)
-        snd?.loops = false
-        return snd
-    }()
+    private let center: UNUserNotificationCenter?
+    private var sound: NSSound?
+    private var customSoundURL: URL?
 
     private override init() {
+        if AlertManager.isRunningInsideAppBundle {
+            center = UNUserNotificationCenter.current()
+        } else {
+            center = nil
+        }
         super.init()
-        center.delegate = self
+        center?.delegate = self
+        _ = reloadSound()
     }
 
     func requestAuthorization() {
+        guard let center else { return }
         center.requestAuthorization(options: [.alert, .sound]) { _, error in
             if let error {
                 NSLog("Flow notifications error: \(error.localizedDescription)")
@@ -39,7 +33,8 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
         finishedMode: TimerViewModel.Mode,
         nextMode: TimerViewModel.Mode,
         flowTitle: String,
-        volume: Double
+        volume: Double,
+        shouldLoop: Bool
     ) {
         let title: String
         switch finishedMode {
@@ -59,31 +54,92 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
             body = "Take a long break to recharge."
         }
 
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
+        if let center {
+            let content = UNMutableNotificationContent()
+            content.title = title
+            content.body = body
+            content.sound = .default
 
-        let request = UNNotificationRequest(
-            identifier: UUID().uuidString,
-            content: content,
-            trigger: nil
-        )
-        center.add(request, withCompletionHandler: nil)
-
-        playSound(volume: volume)
+            let request = UNNotificationRequest(
+                identifier: UUID().uuidString,
+                content: content,
+                trigger: nil
+            )
+            center.add(request, withCompletionHandler: nil)
+        }
+        playSound(volume: volume, shouldLoop: shouldLoop)
     }
 
-    private func playSound(volume: Double) {
+    private func playSound(volume: Double, shouldLoop: Bool) {
         let clamped = max(0, min(1, volume))
-        let boosted = min(1, clamped * 3)
-        guard boosted > 0 else { return }
+        guard clamped > 0 else { return }
         DispatchQueue.main.async { [weak self] in
-            guard let self, let sound = self.sound else { return }
+            guard let self else { return }
+            if self.sound == nil {
+                _ = self.reloadSound()
+            }
+            guard let sound = self.sound else { return }
             sound.stop()
-            sound.volume = Float(boosted)
+            sound.currentTime = 0
+            sound.volume = Float(clamped)
+            sound.loops = shouldLoop
             sound.play()
         }
+    }
+
+    func stopSound() {
+        DispatchQueue.main.async { [weak self] in
+            self?.sound?.stop()
+        }
+    }
+
+    @discardableResult
+    func setCustomSound(url: URL?) -> Bool {
+        customSoundURL = url
+        return reloadSound(forceCustom: url != nil)
+    }
+
+    @discardableResult
+    private func reloadSound(forceCustom: Bool = false) -> Bool {
+        sound?.stop()
+
+        if forceCustom, let customSoundURL,
+           let custom = NSSound(contentsOf: customSoundURL, byReference: true) {
+            custom.loops = false
+            sound = custom
+            return true
+        }
+
+        if let fallback = AlertManager.makeDefaultSound() {
+            sound = fallback
+            return true
+        }
+
+        sound = nil
+        return false
+    }
+
+    private static func makeDefaultSound() -> NSSound? {
+        let preferredNames = ["Funk", "Submarine", "Hero", "Glass", "Ping", "Basso"]
+        for name in preferredNames {
+            if let snd = NSSound(named: NSSound.Name(name)) {
+                snd.loops = false
+                return snd
+            }
+            let url = URL(fileURLWithPath: "/System/Library/Sounds/\(name).aiff")
+            if let snd = NSSound(contentsOf: url, byReference: true) {
+                snd.loops = false
+                return snd
+            }
+        }
+
+        if let bundled = Bundle.main.url(forResource: "FlowComplete", withExtension: "aiff"),
+           let snd = NSSound(contentsOf: bundled, byReference: true) {
+            snd.loops = false
+            return snd
+        }
+
+        return nil
     }
 
     func userNotificationCenter(
@@ -92,6 +148,10 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         completionHandler([.banner, .list, .sound])
+    }
+
+    private static var isRunningInsideAppBundle: Bool {
+        Bundle.main.bundleURL.pathExtension.lowercased() == "app"
     }
 }
 #endif
