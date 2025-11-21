@@ -65,5 +65,8 @@ struct MiniTimerView: View {
             .buttonStyle(.plain)
             .padding(.bottom, 12)
         }
+        .onTapGesture(count: 2) {
+            restoreAction?()
+        }
     }
 }
