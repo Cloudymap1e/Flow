@@ -7,16 +7,16 @@ import UniformTypeIdentifiers
 struct TimerView: View {
     @EnvironmentObject private var store: SessionStore
     @EnvironmentObject private var timer: TimerViewModel
+    @Environment(\.colorScheme) private var colorScheme
     @State private var isEditingTitle: Bool = false
     @State private var titleDraft: String = ""
     @FocusState private var titleFocused: Bool
     @State private var showingSettings: Bool = false
-    @State private var flowMinutes: Double = 25
-    @State private var shortMinutes: Double = 5
-    @State private var longMinutes: Double = 30
+    @State private var flowMinutes: Int = 25
+    @State private var shortMinutes: Int = 5
+    @State private var longMinutes: Int = 30
     @State private var validationMessage: String?
 #if os(macOS)
-    @State private var showingSoundImporter: Bool = false
     @State private var soundImportMessage: String?
     @State private var soundImportIsError: Bool = false
 #endif
@@ -32,13 +32,9 @@ struct TimerView: View {
                     ZStack {
                         // Glassy background circle
                         Circle()
-                            .fill(.ultraThinMaterial)
-                            .frame(width: 300, height: 300)
-                            .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                            )
+                            .fill(timerFaceGradient)
+                            .frame(width: 260, height: 260)
+                            .shadow(color: Color.black.opacity(0.08), radius: 16, x: 0, y: 8)
 
                         // Progress Ring
                         Circle()
@@ -84,22 +80,6 @@ struct TimerView: View {
         .onChange(of: titleFocused) { isFocused in
             if !isFocused && isEditingTitle { commitTitle() }
         }
-#if os(macOS)
-        .fileImporter(
-            isPresented: $showingSoundImporter,
-            allowedContentTypes: [.audio],
-            allowsMultipleSelection: false
-        ) { result in
-            switch result {
-            case .success(let urls):
-                guard let url = urls.first else { return }
-                handleSoundSelection(url: url)
-            case .failure:
-                soundImportIsError = true
-                soundImportMessage = "Unable to access the selected file."
-            }
-        }
-#endif
     }
 
     // MARK: Components
@@ -237,8 +217,6 @@ struct TimerView: View {
                 Text("Timer Settings")
                     .font(.title3.weight(.semibold))
                 Spacer()
-                Button("Done") { showingSettings = false }
-                    .keyboardShortcut(.defaultAction)
             }
 
             settingsRow(title: "Flow", binding: $flowMinutes)
@@ -261,33 +239,50 @@ struct TimerView: View {
                     .font(.footnote)
             }
 
-            Divider()
-                .padding(.vertical, 4)
-
-            Button {
-                importSessions()
-            } label: {
-                Label("Import Sessions (JSON or CSV)", systemImage: "tray.and.arrow.down.fill")
-            }
-            .buttonStyle(.bordered)
-
             HStack {
+                Button("Cancel") {
+                    showingSettings = false
+                }
+                .keyboardShortcut(.cancelAction)
                 Spacer()
                 Button("Save") { saveDurations() }
                     .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
             }
         }
         .padding(20)
         .frame(width: 340)
     }
 
-    private func settingsRow(title: String, binding: Binding<Double>) -> some View {
-        HStack {
+    private var timerFaceGradient: RadialGradient {
+        let highlight = colorScheme == .dark ? Color.white.opacity(0.25) : Color.white.opacity(0.65)
+        let shade = colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.2)
+        return RadialGradient(
+            gradient: Gradient(colors: [highlight, shade]),
+            center: .center,
+            startRadius: 10,
+            endRadius: 180
+        )
+    }
+
+    private func settingsRow(title: String, binding: Binding<Int>) -> some View {
+        HStack(spacing: 12) {
             Text(title)
                 .frame(width: 110, alignment: .leading)
-            Stepper(value: binding, in: 1...180, step: 1) {
-                Text("\(Int(binding.wrappedValue)) minutes")
+            HStack(spacing: 8) {
+                TextField("Minutes", value: binding, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 72)
+                    .multilineTextAlignment(.center)
+                    .monospacedDigit()
+                    .onChange(of: binding.wrappedValue) { _ in
+                        enforceMinuteBounds(binding)
+                    }
+                Text("min")
+                    .foregroundStyle(.secondary)
             }
+            Stepper("", value: binding, in: 1...180, step: 1)
+                .labelsHidden()
         }
     }
 
@@ -299,9 +294,9 @@ struct TimerView: View {
     }
 
     private func syncDurationsFromModel() {
-        flowMinutes = Double(timer.flowDuration / 60)
-        shortMinutes = Double(timer.shortBreak / 60)
-        longMinutes = Double(timer.longBreak / 60)
+        flowMinutes = timer.flowDuration / 60
+        shortMinutes = timer.shortBreak / 60
+        longMinutes = timer.longBreak / 60
     }
 
     private func saveDurations() {
@@ -312,32 +307,18 @@ struct TimerView: View {
         }
         validationMessage = nil
         timer.applyDurations(
-            flow: Int(flowMinutes) * 60,
-            short: Int(shortMinutes) * 60,
-            long: Int(longMinutes) * 60
+            flow: flowMinutes * 60,
+            short: shortMinutes * 60,
+            long: longMinutes * 60
         )
         showingSettings = false
     }
 
-    private func importSessions() {
-#if os(macOS)
-        let panel = NSOpenPanel()
-        panel.allowedContentTypes = [.json, .commaSeparatedText]
-        panel.allowsMultipleSelection = false
-        panel.canChooseDirectories = false
-        panel.begin { resp in
-            guard resp == .OK, let url = panel.url else { return }
-            do {
-                if url.pathExtension.lowercased() == "csv" {
-                    try store.importFromCSV(url: url)
-                } else {
-                    try store.importFromJSON(url: url)
-                }
-            } catch {
-                store.lastErrorMessage = "Import failed: \(error.localizedDescription)"
-            }
+    private func enforceMinuteBounds(_ binding: Binding<Int>) {
+        let clamped = min(max(binding.wrappedValue, 1), 180)
+        if clamped != binding.wrappedValue {
+            binding.wrappedValue = clamped
         }
-#endif
     }
 
 #if os(macOS)
@@ -351,7 +332,7 @@ struct TimerView: View {
                 Button("Choose File…") {
                     soundImportMessage = nil
                     soundImportIsError = false
-                    showingSoundImporter = true
+                    presentSoundPicker()
                 }
             }
             if timer.hasCustomAlertSound {
@@ -381,6 +362,17 @@ struct TimerView: View {
         } else {
             soundImportIsError = true
             soundImportMessage = "Could not load \(url.lastPathComponent). Using default alert."
+        }
+    }
+
+    private func presentSoundPicker() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.audio]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.begin { response in
+            guard response == .OK, let url = panel.url else { return }
+            handleSoundSelection(url: url)
         }
     }
 #endif

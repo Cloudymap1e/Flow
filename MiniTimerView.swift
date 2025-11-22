@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MiniTimerView: View {
     @EnvironmentObject var timer: TimerViewModel
+    @Environment(\.colorScheme) private var colorScheme
     private static let dialSize: CGFloat = 220
     private static let padding: CGFloat = 8
 
@@ -12,11 +13,7 @@ struct MiniTimerView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    Circle()
-                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
-                )
+                .fill(dialGradient)
                 .shadow(color: Color.black.opacity(0.25), radius: 20, x: 0, y: 12)
 
             Circle()
@@ -36,7 +33,7 @@ struct MiniTimerView: View {
 
             VStack(spacing: 14) {
                 Text(timer.displayTitle)
-                    .font(.caption.weight(.semibold))
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .textCase(.uppercase)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -85,6 +82,17 @@ struct MiniTimerView: View {
             FloatingWindowManager.shared.restoreMainWindow()
         }
         .help("Double-click to restore the main Flow window")
+    }
+
+    private var dialGradient: RadialGradient {
+        let center = colorScheme == .dark ? Color.white.opacity(0.35) : Color.white.opacity(0.95)
+        let edge = colorScheme == .dark ? Color.white.opacity(0.12) : Color.white.opacity(0.35)
+        return RadialGradient(
+            gradient: Gradient(colors: [center, edge]),
+            center: .center,
+            startRadius: 0,
+            endRadius: 160
+        )
     }
 
     private func controlButton(

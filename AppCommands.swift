@@ -1,7 +1,6 @@
 import SwiftUI
 #if os(macOS)
 import AppKit
-import UniformTypeIdentifiers
 #endif
 
 struct AppCommands: Commands {
@@ -46,12 +45,6 @@ struct AppCommands: Commands {
             }
         }
 
-        CommandGroup(after: .importExport) {
-            Button("Import Sessions…") { importJSONOrCSV() }
-                .keyboardShortcut("I", modifiers: [.command])
-
-            Button("Export JSON…") { exportJSON() }
-        }
     }
 
     // MARK: Helpers
@@ -87,41 +80,4 @@ struct AppCommands: Commands {
 #endif
     }
 
-    private func importJSONOrCSV() {
-#if os(macOS)
-        let panel = NSOpenPanel()
-        panel.allowedContentTypes = [.json, .commaSeparatedText]
-        panel.allowsMultipleSelection = false
-        panel.canChooseDirectories = false
-        panel.begin { resp in
-            guard resp == .OK, let url = panel.url else { return }
-            do {
-                if url.pathExtension.lowercased() == "csv" {
-                    try store.importFromCSV(url: url)
-                } else {
-                    try store.importFromJSON(url: url)
-                }
-            } catch {
-                store.lastErrorMessage = "Import failed: \(error.localizedDescription)"
-            }
-        }
-#else
-        // Not available on non-macOS platforms.
-#endif
-    }
-
-    private func exportJSON() {
-#if os(macOS)
-        let panel = NSSavePanel()
-        panel.allowedContentTypes = [.json]
-        panel.nameFieldStringValue = "sessions.json"
-        panel.begin { resp in
-            guard resp == .OK, let url = panel.url else { return }
-            do { try store.exportJSON(to: url) }
-            catch { store.lastErrorMessage = "Export failed: \(error.localizedDescription)" }
-        }
-#else
-        // Not available on non-macOS platforms.
-#endif
-    }
 }

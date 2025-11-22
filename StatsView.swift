@@ -1,4 +1,8 @@
 import SwiftUI
+#if os(macOS)
+import AppKit
+import UniformTypeIdentifiers
+#endif
 
 struct StatsView: View {
     @EnvironmentObject private var store: SessionStore
@@ -39,11 +43,6 @@ struct StatsView: View {
                     .padding(.top, 20)
                     .transition(.move(edge: .trailing))
             }
-
-            Divider()
-                .padding(.horizontal, 20)
-
-            recentSessionsButton
         }
         .animation(.easeInOut, value: viewMode)
         .onChange(of: granularity) { _ in periodOffset = 0 }
@@ -65,6 +64,11 @@ struct StatsView: View {
 
                 Menu {
                     Button("Reset to Today") { periodOffset = 0 }
+#if os(macOS)
+                    Divider()
+                    Button("Import Sessions…") { importSessions() }
+                    Button("Export Sessions…") { exportSessions() }
+#endif
                 } label: {
                     Image(systemName: "ellipsis")
                         .rotationEffect(.degrees(90))
@@ -89,6 +93,8 @@ struct StatsView: View {
             HStack(spacing: 18) {
                 StatChip(title: "Sessions", value: "\(periodSessionCount)")
                 StatChip(title: "Time", value: periodTotalSeconds.clockString)
+                Spacer(minLength: 12)
+                recentSessionsButton
             }
         }
         .padding(24)
@@ -136,33 +142,27 @@ struct StatsView: View {
         Button {
             showRecentSessionsPopover = true
         } label: {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Recent Sessions")
-                        .font(.headline)
-                    Text(recentSessionsSummary)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 12)
-                Image(systemName: "chevron.right.circle.fill")
-                    .font(.title3)
-                    .foregroundStyle(.secondary.opacity(0.9))
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Recent Sessions")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(recentSessionDurationText)
+                    .font(.title3.weight(.semibold))
+                    .monospacedDigit()
+                Text(recentSessionsSummary)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 12)
+            .frame(width: 180, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(Color.primary.opacity(0.03))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color.secondary.opacity(0.12))
             )
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, 20)
         .popover(isPresented: $showRecentSessionsPopover, arrowEdge: .bottom) {
             sessionsPopoverContent
         }
@@ -401,9 +401,14 @@ struct StatsView: View {
             let df = DateFormatter()
             df.dateStyle = .medium
             df.timeStyle = .short
-            return "Latest on \(df.string(from: start))"
+            return df.string(from: start)
         }
         return "Tap to review your latest flows"
+    }
+
+    private var recentSessionDurationText: String {
+        guard let latest = sessions.first else { return "--:--" }
+        return latest.actualSeconds.clockString
     }
 
     private func bucketTooltip(_ bucket: StatsBucket) -> String {
@@ -434,6 +439,47 @@ struct StatsView: View {
         if minutes > 0 { components.append("\(minutes)m") }
         if components.isEmpty { components.append("\(secs)s") }
         return components.joined(separator: " ")
+    }
+
+    private func importSessions() {
+#if os(macOS)
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.json, .commaSeparatedText]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.begin { resp in
+            guard resp == .OK, let url = panel.url else { return }
+            do {
+                if url.pathExtension.lowercased() == "csv" {
+                    try store.importFromCSV(url: url)
+                } else {
+                    try store.importFromJSON(url: url)
+                }
+            } catch {
+                store.lastErrorMessage = "Import failed: \(error.localizedDescription)"
+            }
+        }
+#else
+        store.lastErrorMessage = "Import is only available on macOS."
+#endif
+    }
+
+    private func exportSessions() {
+#if os(macOS)
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.json]
+        panel.nameFieldStringValue = "sessions.json"
+        panel.begin { resp in
+            guard resp == .OK, let url = panel.url else { return }
+            do {
+                try store.exportJSON(to: url)
+            } catch {
+                store.lastErrorMessage = "Export failed: \(error.localizedDescription)"
+            }
+        }
+#else
+        store.lastErrorMessage = "Export is only available on macOS."
+#endif
     }
 }
 

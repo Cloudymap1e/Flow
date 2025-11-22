@@ -15,6 +15,7 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         height: MiniTimerView.defaultDiameter
     )
     private let positionKey = "FloatingTimerPanelOrigin"
+    private let floatingPanelAlpha: CGFloat = 0.9
 
     private weak var timer: TimerViewModel?
     private weak var mainWindow: NSWindow?
@@ -23,6 +24,8 @@ final class FloatingWindowManager: NSObject, ObservableObject {
     private var hostingController: NSHostingController<MiniTimerContainerView>?
     private var panelMoveObserver: NSObjectProtocol?
     private var panelScreenObserver: NSObjectProtocol?
+    private var isRequestingMainWindow = false
+    private var hasConfiguredMainWindow = false
 
     private var isPreferenceEnabled = false
     private var isAppActive = true
@@ -62,6 +65,8 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         guard self.mainWindow !== window else { return }
 
         self.mainWindow = window
+        hasConfiguredMainWindow = true
+        isRequestingMainWindow = false
         window.isReleasedWhenClosed = false
         window.tabbingMode = .disallowed
 
@@ -72,8 +77,15 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         delegate.miniaturizeRequested = { [weak self] in
             self?.handleMainWindowDismissal()
         }
+        delegate.becameKey = { [weak self] in
+            self?.handleMainWindowActivated()
+        }
         window.delegate = delegate
         mainWindowDelegate = delegate
+
+        if window.isVisible {
+            handleMainWindowActivated()
+        }
     }
 
     func setFloatingEnabled(_ enabled: Bool) {
@@ -91,13 +103,10 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         isForcedVisible = false
         hideFloatingPanel()
 
-        if let window = mainWindow {
-            NSApp.activate(ignoringOtherApps: true)
-            window.makeKeyAndOrderFront(nil)
-        } else {
-            NSApp.activate(ignoringOtherApps: true)
-            NotificationCenter.default.post(name: .flowOpenMainWindow, object: nil)
-        }
+        if showExistingMainWindow() { return }
+        guard hasConfiguredMainWindow else { return }
+
+        requestMainWindowCreationIfNeeded()
     }
 
     private func handleMainWindowDismissal() {
@@ -107,6 +116,11 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         }
         mainWindow?.orderOut(nil)
         showFloatingPanel(reason: .forced)
+    }
+
+    private func handleMainWindowActivated() {
+        isForcedVisible = false
+        hideFloatingPanel()
     }
 
     private func showFloatingPanel(reason: ShowReason) {
@@ -122,7 +136,7 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         isForcedVisible = reason == .forced
 
         guard let panel = floatingPanel else { return }
-        panel.alphaValue = 1
+        panel.alphaValue = floatingPanelAlpha
         panel.orderFrontRegardless()
         constrainAndPersistPanelPosition()
     }
@@ -152,7 +166,7 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         ]
         panel.isOpaque = false
         panel.backgroundColor = .clear
-        panel.hasShadow = true
+        panel.hasShadow = false
         panel.hidesOnDeactivate = false
         panel.isMovableByWindowBackground = true
         panel.worksWhenModal = true
@@ -283,12 +297,41 @@ final class FloatingWindowManager: NSObject, ObservableObject {
 
     private func restoreMainWindowIfNeeded() {
         guard floatingPanel == nil else { return }
-        guard let window = mainWindow else {
-            NotificationCenter.default.post(name: .flowOpenMainWindow, object: nil)
-            return
+        guard hasConfiguredMainWindow else { return }
+        if !showExistingMainWindow() {
+            requestMainWindowCreationIfNeeded()
         }
-        if !window.isVisible {
-            window.makeKeyAndOrderFront(nil)
+    }
+}
+
+extension FloatingWindowManager {
+    @discardableResult
+    private func showExistingMainWindow() -> Bool {
+        guard let window = mainWindow ?? findMainWindowInApplication() else { return false }
+
+        mainWindow = window
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+        return true
+    }
+
+    private func requestMainWindowCreationIfNeeded() {
+        guard !isRequestingMainWindow else { return }
+
+        isRequestingMainWindow = true
+        NSApp.activate(ignoringOtherApps: true)
+        NotificationCenter.default.post(name: .flowOpenMainWindow, object: nil)
+    }
+
+    private func findMainWindowInApplication() -> NSWindow? {
+        if let identified = NSApp.windows.first(where: { $0.identifier?.rawValue == "main" }) {
+            return identified
+        }
+
+        return NSApp.windows.first { window in
+            guard window !== floatingPanel else { return false }
+            guard !(window is NSPanel) else { return false }
+            return window.canBecomeMain
         }
     }
 }
