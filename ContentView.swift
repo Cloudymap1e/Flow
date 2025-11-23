@@ -26,6 +26,7 @@ struct ContentView: View {
 struct MainView: View {
     @Binding var selectedTab: Int
     @EnvironmentObject private var timer: TimerViewModel
+    @Namespace private var tabSelectionNamespace
     
     var body: some View {
         ZStack {
@@ -69,11 +70,18 @@ struct MainView: View {
                 .foregroundStyle(selectedTab == tag ? .primary : .secondary)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 16)
-                .background(
-                    Capsule()
-                        .fill(Color.primary.opacity(0.1))
-                        .opacity(selectedTab == tag ? 1 : 0)
-                )
+                .background(alignment: .center) {
+                    if selectedTab == tag {
+                        Capsule()
+                            .fill(Color.primary.opacity(0.08))
+                            .overlay(
+                                Capsule()
+                                    .stroke(Color.accentColor.opacity(0.5), lineWidth: 2)
+                            )
+                            .matchedGeometryEffect(id: "tabSelection", in: tabSelectionNamespace)
+                            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
+                    }
+                }
         }
         .buttonStyle(.plain)
     }
