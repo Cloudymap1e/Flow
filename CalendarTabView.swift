@@ -27,7 +27,8 @@ struct CalendarTabView: View {
                     sessions: store.allSessions(),
                     selectedDate: selectedDate,
                     scheduledCountProvider: { scheduler.scheduledCount(on: $0) },
-                    onSelectDate: handleDateSelection
+                    onSelectDate: selectDate,
+                    onDoubleSelectDate: handleDateSelection
                 )
 
                 scheduleList
@@ -105,7 +106,7 @@ struct CalendarTabView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("No timers for this day.")
                 .font(.subheadline.weight(.semibold))
-            Text("Click a date on the calendar to add a focused session.")
+            Text("Double-click a date on the calendar to add a focused session.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -222,12 +223,16 @@ struct CalendarTabView: View {
         .frame(width: 360)
     }
 
-    private func handleDateSelection(_ date: Date) {
+    private func selectDate(_ date: Date) {
         selectedDate = date
         scheduledStart = defaultStartTime(for: date)
         if titleDraft.isEmpty {
             titleDraft = timer.displayTitle
         }
+    }
+
+    private func handleDateSelection(_ date: Date) {
+        selectDate(date)
         showingScheduler = true
     }
 

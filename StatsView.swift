@@ -529,6 +529,7 @@ struct CalendarHeatmapView: View {
     var selectedDate: Date? = nil
     var scheduledCountProvider: ((Date) -> Int)? = nil
     var onSelectDate: ((Date) -> Void)? = nil
+    var onDoubleSelectDate: ((Date) -> Void)? = nil
     @State private var currentMonth: Date = Date()
     @State private var hoveredDate: Date?
 
@@ -590,9 +591,18 @@ struct CalendarHeatmapView: View {
                         .onHover { isHovering in
                             hoveredDate = isHovering ? date : nil
                         }
-                        .onTapGesture {
-                            onSelectDate?(date)
-                        }
+                        .gesture(
+                            TapGesture(count: 2)
+                                .onEnded {
+                                    onDoubleSelectDate?(date)
+                                }
+                                .exclusively(before:
+                                    TapGesture()
+                                        .onEnded {
+                                            onSelectDate?(date)
+                                        }
+                                )
+                        )
                     } else {
                         Color.clear.frame(height: 40)
                     }
