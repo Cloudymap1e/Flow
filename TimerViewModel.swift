@@ -38,6 +38,8 @@ final class TimerViewModel: ObservableObject {
 
     var currentDurationSeconds: Int { intendedSeconds() }
     var hasProgress: Bool { remaining < currentDurationSeconds }
+    var currentSessionStartDate: Date? { startTS }
+    var elapsedInCurrentSession: Int { max(0, intendedSeconds() - remaining) }
 
     var progress: Double {
         let total = Double(intendedSeconds())
@@ -133,6 +135,18 @@ final class TimerViewModel: ObservableObject {
         pause()
         startTS = nil
         remaining = intendedSeconds()
+    }
+
+    func fastForward() {
+        let elapsed = max(0, intendedSeconds() - remaining)
+        stopAlarmSound()
+        pause()
+        persistSession(actualSeconds: elapsed)
+        if mode == .flow {
+            completedFlowsInCycle += 1
+        }
+        isAlarmRinging = false
+        advanceModeAfterCompletion()
     }
 
     func renameSession(to rawTitle: String) {

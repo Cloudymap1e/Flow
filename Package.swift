@@ -4,8 +4,8 @@ import PackageDescription
 
 let package = Package(
     name: "Flow",
-    platforms: [
-        .macOS(.v13)
+platforms: [
+        .macOS(.v14)
     ],
     products: [
         .executable(name: "Flow", targets: ["Flow"])
@@ -16,11 +16,17 @@ let package = Package(
             path: ".",
             exclude: [
                 "Flow.xcodeproj",
-                "Flow.entitlements"
+                "Flow.entitlements",
+                "Tests"
             ],
             resources: [
                 .process("Assets.xcassets")
             ]
+        ),
+        .testTarget(
+            name: "FlowTests",
+            dependencies: ["Flow"],
+            path: "Tests/FlowTests"
         )
     ]
 )

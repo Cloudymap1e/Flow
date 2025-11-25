@@ -40,6 +40,15 @@ struct Session: Identifiable, Codable, Equatable {
 enum StatsGranularity: String, CaseIterable, Identifiable {
     case day = "D", week = "W", month = "M", year = "Y"
     var id: String { rawValue }
+
+    var lowerGranularity: StatsGranularity? {
+        switch self {
+        case .year: return .month
+        case .month: return .week
+        case .week: return .day
+        case .day: return nil
+        }
+    }
 }
 
 /// Bucket used to drive charts/lists for a given period.

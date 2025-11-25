@@ -2,13 +2,18 @@ import SwiftUI
 
 @main
 struct LearningTimerApp: App {
-    @StateObject private var store = SessionStore()
-    @StateObject private var timerVM = TimerViewModel()
+    @StateObject private var store: SessionStore
+    @StateObject private var timerVM: TimerViewModel
 
     init() {
+        let store = SessionStore()
+        let timer = TimerViewModel()
+        _store = StateObject(wrappedValue: store)
+        _timerVM = StateObject(wrappedValue: timer)
 #if os(macOS)
         AlertManager.shared.requestAuthorization()
 #endif
+        CountdownStorage.migrateLegacyDataIfNeeded()
     }
 
     var body: some Scene {
@@ -40,7 +45,7 @@ struct MainWindowContent: View {
             .onAppear {
                 FloatingWindowManager.shared.setFloatingEnabled(timer.floatOnBackground)
             }
-            .onChange(of: timer.floatOnBackground) { newValue in
+            .onChange(of: timer.floatOnBackground) { _, newValue in
                 FloatingWindowManager.shared.setFloatingEnabled(newValue)
             }
             .onReceive(NotificationCenter.default.publisher(for: .flowOpenMainWindow)) { _ in

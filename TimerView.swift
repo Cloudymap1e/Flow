@@ -77,7 +77,7 @@ struct TimerView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { syncDurationsFromModel() }
         .sheet(isPresented: $showingSettings) { settingsSheet }
-        .onChange(of: titleFocused) { isFocused in
+        .onChange(of: titleFocused) { _, isFocused in
             if !isFocused && isEditingTitle { commitTitle() }
         }
     }
@@ -137,6 +137,22 @@ struct TimerView: View {
                     .frame(width: 8, height: 8)
                     .animation(.spring, value: timer.completedFlowsInCycle)
             }
+
+            Button {
+                timer.fastForward()
+            } label: {
+                Image(systemName: "forward.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 0.5))
+            }
+            .buttonStyle(.plain)
+            .help("Fast-forward to the next session")
+            .accessibilityIdentifier("fastForward")
+            .disabled(!timer.hasProgress)
+            .opacity(timer.hasProgress ? 1 : 0.4)
         }
     }
 
@@ -275,7 +291,7 @@ struct TimerView: View {
                     .frame(width: 72)
                     .multilineTextAlignment(.center)
                     .monospacedDigit()
-                    .onChange(of: binding.wrappedValue) { _ in
+                    .onChange(of: binding.wrappedValue) { _, _ in
                         enforceMinuteBounds(binding)
                     }
                 Text("min")

@@ -25,6 +25,7 @@ DerivedData/
 *.mode2v3
 *.perspectivev3
 *.moved-aside
+.cache/
 
 # Data files
 *.csv

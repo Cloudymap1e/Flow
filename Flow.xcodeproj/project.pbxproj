@@ -11,17 +11,19 @@
 		1A6BE3ABCD1585753940AFBC /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4D2ECBB791006E3E0E /* StatsView.swift */; };
 		32AD9530DC1E09460339CF37 /* LearningTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF472ECBB71E006E3E0E /* LearningTimerApp.swift */; };
 		40C824D37012982788A4583D /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4E2ECBB7A1006E3E0E /* AppCommands.swift */; };
+		511C6EAA2ED3FA490012F103 /* EffectiveFocusCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511C6EA92ED3FA490012F103 /* EffectiveFocusCalculator.swift */; };
 		51A85EA72ECE04860033FEC2 /* MiniTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */; };
 		51A85EA82ECE04860033FEC2 /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA52ECE04860033FEC2 /* WindowAccessor.swift */; };
 		51E23B9E2ECDAEB90054BB0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */; };
 		548E8EBDC7F59B434050AE35 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF482ECBB749006E3E0E /* Models.swift */; };
 		9350A83623204DB7C49F24E8 /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4A2ECBB76D006E3E0E /* TimerViewModel.swift */; };
 		9BCFD6CEB648CF32EE75DF18 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF492ECBB75C006E3E0E /* SessionStore.swift */; };
-		FCCBCF317CB40E86D46551B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4B2ECBB779006E3E0E /* ContentView.swift */; };
 		C0DE00012345678900000001 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000011 /* AlertManager.swift */; };
 		C0DE00012345678900000002 /* FlowNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000012 /* FlowNotifications.swift */; };
 		C0DE00012345678900000003 /* FloatingWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000013 /* FloatingWindowManager.swift */; };
 		C0DE00012345678900000004 /* WindowEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000014 /* WindowEventHandler.swift */; };
+		C0DE00012345678900000031 /* CountdownStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00012345678900000021 /* CountdownStorage.swift */; };
+		FCCBCF317CB40E86D46551B4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FAF4B2ECBB779006E3E0E /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,7 +43,11 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		511C6EA92ED3FA490012F103 /* EffectiveFocusCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectiveFocusCalculator.swift; sourceTree = "<group>"; };
 		516FAF0F2ECBB44D006E3E0E /* Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		516FAF1D2ECBB44E006E3E0E /* FlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		516FAF272ECBB44E006E3E0E /* FlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,6 +65,7 @@
 		51A85EA92ECE04B50033FEC2 /* Flow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flow.entitlements; sourceTree = "<group>"; };
 		51A85EAA2ECE04B50033FEC2 /* Flow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Flow.xcodeproj; sourceTree = "<group>"; };
 		51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C0DE00012345678900000021 /* CountdownStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownStorage.swift; sourceTree = "<group>"; };
 		C0DE00012345678900000011 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		C0DE00012345678900000012 /* FlowNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowNotifications.swift; sourceTree = "<group>"; };
 		C0DE00012345678900000013 /* FloatingWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindowManager.swift; sourceTree = "<group>"; };
@@ -93,6 +100,8 @@
 		516FAF062ECBB44D006E3E0E = {
 			isa = PBXGroup;
 			children = (
+				511C6EA92ED3FA490012F103 /* EffectiveFocusCalculator.swift */,
+				C0DE00012345678900000021 /* CountdownStorage.swift */,
 				51A85EA92ECE04B50033FEC2 /* Flow.entitlements */,
 				51A85EAA2ECE04B50033FEC2 /* Flow.xcodeproj */,
 				51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */,
@@ -280,6 +289,8 @@
 				548E8EBDC7F59B434050AE35 /* Models.swift in Sources */,
 				51A85EA72ECE04860033FEC2 /* MiniTimerView.swift in Sources */,
 				51A85EA82ECE04860033FEC2 /* WindowAccessor.swift in Sources */,
+				511C6EAA2ED3FA490012F103 /* EffectiveFocusCalculator.swift in Sources */,
+				C0DE00012345678900000031 /* CountdownStorage.swift in Sources */,
 				9BCFD6CEB648CF32EE75DF18 /* SessionStore.swift in Sources */,
 				9350A83623204DB7C49F24E8 /* TimerViewModel.swift in Sources */,
 				FCCBCF317CB40E86D46551B4 /* ContentView.swift in Sources */,
