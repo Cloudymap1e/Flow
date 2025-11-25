@@ -4,13 +4,17 @@ import AppKit
 struct ContentView: View {
     @EnvironmentObject private var store: SessionStore
     @EnvironmentObject private var timer: TimerViewModel
+    @EnvironmentObject private var scheduler: FlowScheduler
 
-    @State private var selectedTab: Int = 0 // 0 = Timer, 1 = Stats, 2 = Countdown
+    @State private var selectedTab: Int = 0 // 0 = Timer, 1 = Stats, 2 = Calendar, 3 = Countdown
     @State private var showErrorBanner: Bool = false
 
     var body: some View {
         MainView(selectedTab: $selectedTab)
-            .onAppear { timer.attach(store: store) }
+            .onAppear {
+                timer.attach(store: store)
+                scheduler.attach(timer: timer)
+            }
             .overlay(alignment: .bottom) {
                 if let msg = store.lastErrorMessage, !msg.isEmpty {
                     ErrorBanner(text: msg)
@@ -40,7 +44,8 @@ struct MainView: View {
                 HStack(spacing: 0) {
                     tabButton(title: "Timer", tag: 0)
                     tabButton(title: "Statistics", tag: 1)
-                    tabButton(title: "Countdown", tag: 2)
+                    tabButton(title: "Calendar", tag: 2)
+                    tabButton(title: "Countdown", tag: 3)
                 }
                 .padding(4)
                 .background(.ultraThinMaterial, in: Capsule())
@@ -55,6 +60,9 @@ struct MainView: View {
                             .transition(.opacity.combined(with: .move(edge: .leading)))
                     case 1:
                         StatsView()
+                            .transition(.opacity.combined(with: .move(edge: .trailing)))
+                    case 2:
+                        CalendarTabView()
                             .transition(.opacity.combined(with: .move(edge: .trailing)))
                     default:
                         CountdownView()

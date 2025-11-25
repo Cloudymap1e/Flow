@@ -11,14 +11,7 @@ struct StatsView: View {
     @State private var granularity: StatsGranularity = .week
     @State private var periodOffset: Int = 0
     @State private var showRecentSessionsPopover: Bool = false
-    @State private var viewMode: StatsViewMode = .charts // New mode switcher
     @State private var showingTotalTime: Bool = false
-
-    enum StatsViewMode: String, CaseIterable, Identifiable {
-        case charts = "Charts"
-        case calendar = "Calendar"
-        var id: String { rawValue }
-    }
 
     private var granularitySelection: Binding<StatsGranularity> {
         Binding(
@@ -33,33 +26,16 @@ struct StatsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            // Header with View Mode Picker
-            HStack {
-                Picker("View Mode", selection: $viewMode) {
-                    ForEach(StatsViewMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 200)
-                
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-
-            if viewMode == .charts {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Statistics")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .padding(.horizontal, 20)
                 statsCard
-                    .padding(.top, -20)
-                    .transition(.move(edge: .leading))
-            } else {
-                CalendarHeatmapView(sessions: store.allSessions())
-                    .padding(.top, 20)
-                    .transition(.move(edge: .trailing))
+                    .padding(.top, 4)
             }
+            .padding(.vertical, 16)
         }
-        .animation(.easeInOut, value: viewMode)
     }
 
     private var statsCard: some View {
@@ -550,10 +526,17 @@ struct StatsView: View {
 // MARK: - Calendar Heatmap View
 struct CalendarHeatmapView: View {
     let sessions: [Session]
+    var selectedDate: Date? = nil
+    var scheduledCountProvider: ((Date) -> Int)? = nil
+    var onSelectDate: ((Date) -> Void)? = nil
     @State private var currentMonth: Date = Date()
     @State private var hoveredDate: Date?
 
-    private let calendar = Calendar.current
+    private var calendar: Calendar {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2
+        return calendar
+    }
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
 
     var body: some View {
@@ -600,10 +583,15 @@ struct CalendarHeatmapView: View {
                         DayCell(
                             date: date,
                             seconds: seconds(for: date),
-                            isHovered: hoveredDate == date
+                            isHovered: hoveredDate == date,
+                            isSelected: isSelected(date),
+                            scheduledCount: scheduledCount(for: date)
                         )
                         .onHover { isHovering in
                             hoveredDate = isHovering ? date : nil
+                        }
+                        .onTapGesture {
+                            onSelectDate?(date)
                         }
                     } else {
                         Color.clear.frame(height: 40)
@@ -645,6 +633,15 @@ struct CalendarHeatmapView: View {
         return days
     }
 
+    private func isSelected(_ date: Date) -> Bool {
+        guard let selectedDate else { return false }
+        return calendar.isDate(selectedDate, inSameDayAs: date)
+    }
+
+    private func scheduledCount(for date: Date) -> Int {
+        scheduledCountProvider?(date) ?? 0
+    }
+
     private func seconds(for date: Date) -> Int {
         sessions.filter { session in
             guard let start = session.startTimestamp else { return false }
@@ -657,6 +654,8 @@ struct DayCell: View {
     let date: Date
     let seconds: Int
     let isHovered: Bool
+    let isSelected: Bool
+    let scheduledCount: Int
 
     var body: some View {
         ZStack {
@@ -665,12 +664,26 @@ struct DayCell: View {
                 .frame(height: 40)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white.opacity(isHovered ? 0.5 : 0), lineWidth: 2)
+                        .stroke(
+                            Color.accentColor.opacity(isSelected ? 0.9 : (isHovered ? 0.5 : 0)),
+                            lineWidth: isSelected ? 2 : 2
+                        )
                 )
 
             Text("\(Calendar.current.component(.day, from: date))")
                 .font(.caption.weight(.medium))
                 .foregroundStyle(seconds > 0 ? .white : .primary)
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if scheduledCount > 0 {
+                Text("\(scheduledCount)")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.accentColor.opacity(0.92), in: Capsule())
+                    .offset(x: -4, y: -4)
+            }
         }
         .overlay(alignment: .top) {
             if isHovered {

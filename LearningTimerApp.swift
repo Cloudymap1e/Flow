@@ -4,12 +4,15 @@ import SwiftUI
 struct LearningTimerApp: App {
     @StateObject private var store: SessionStore
     @StateObject private var timerVM: TimerViewModel
+    @StateObject private var scheduler: FlowScheduler
 
     init() {
         let store = SessionStore()
         let timer = TimerViewModel()
+        let scheduler = FlowScheduler(timer: timer)
         _store = StateObject(wrappedValue: store)
         _timerVM = StateObject(wrappedValue: timer)
+        _scheduler = StateObject(wrappedValue: scheduler)
 #if os(macOS)
         AlertManager.shared.requestAuthorization()
 #endif
@@ -21,6 +24,7 @@ struct LearningTimerApp: App {
             MainWindowContent()
                 .environmentObject(store)
                 .environmentObject(timerVM)
+                .environmentObject(scheduler)
                 .frame(minWidth: 880, minHeight: 580)
         }
         // Reasonable desktop default; still resizable.

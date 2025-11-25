@@ -8,19 +8,20 @@ final class SessionStore: ObservableObject {
     @Published var lastErrorMessage: String? = nil
 
     private var autosaveCancellable: AnyCancellable?
+    private static let defaultBundleIdentifier = "BlackMaple.Flow"
+    private static let legacyBundleIdentifiers = ["LearningTimer", "com.example.Flow"]
 
     // File location: ~/Library/Application Support/<bundle-id>/sessions.json
     private var fileURL: URL {
-        let fm = FileManager.default
-        let appSupport = try! fm.url(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask, appropriateFor: nil, create: true)
-        let bundleID = Bundle.main.bundleIdentifier ?? "LearningTimer"
-        let dir = appSupport.appendingPathComponent(bundleID, isDirectory: true)
-        if !fm.fileExists(atPath: dir.path) {
-            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        storageURL(for: storageBundleIdentifier, createDirectory: true)
+    }
+
+    private var storageBundleIdentifier: String {
+        if let bundleID = Bundle.main.bundleIdentifier?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !bundleID.isEmpty {
+            return bundleID
         }
-        return dir.appendingPathComponent("sessions.json")
+        return Self.defaultBundleIdentifier
     }
 
     init() {
@@ -40,6 +41,10 @@ final class SessionStore: ObservableObject {
             let root = try decoder.decode(Root.self, from: data)
             sessions = root.sessions
         } catch {
+            if (error as NSError).code == NSFileReadNoSuchFileError, migrateLegacyDataFile() {
+                loadFromDisk()
+                return
+            }
             // First launch or corrupted file: start clean & record error.
             if (error as NSError).code != NSFileReadNoSuchFileError {
                 lastErrorMessage = "Data file unreadable or corrupted. Starting with empty data. (\(error.localizedDescription))"
@@ -220,6 +225,45 @@ final class SessionStore: ObservableObject {
         encoder.dateEncodingStrategy = .iso8601
         let data = try encoder.encode(Root(version: 1, sessions: sessions))
         try data.write(to: url, options: .atomic)
+    }
+
+    // MARK: - Storage Helpers
+    private func storageURL(for bundleID: String, createDirectory: Bool) -> URL {
+        let fm = FileManager.default
+        let appSupport = try! fm.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true)
+        let dir = appSupport.appendingPathComponent(bundleID, isDirectory: true)
+        if createDirectory && !fm.fileExists(atPath: dir.path) {
+            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+        return dir.appendingPathComponent("sessions.json")
+    }
+
+    private func migrateLegacyDataFile() -> Bool {
+        let fm = FileManager.default
+        let destination = fileURL
+        for legacyID in Self.legacyBundleIdentifiers {
+            let legacyURL = storageURL(for: legacyID, createDirectory: false)
+            if fm.fileExists(atPath: legacyURL.path) {
+                do {
+                    if !fm.fileExists(atPath: destination.deletingLastPathComponent().path) {
+                        try fm.createDirectory(
+                            at: destination.deletingLastPathComponent(),
+                            withIntermediateDirectories: true
+                        )
+                    }
+                    try fm.copyItem(at: legacyURL, to: destination)
+                    print("Migrated sessions.json from legacy bundle id \(legacyID) to \(storageBundleIdentifier)")
+                    return true
+                } catch {
+                    print("Failed to migrate legacy sessions from \(legacyID):", error)
+                }
+            }
+        }
+        return false
     }
 
     // Root wrapper used on disk

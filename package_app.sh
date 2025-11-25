@@ -8,6 +8,7 @@ TARGET_DIR="$PROJECT_DIR/build/Build/Products/Release"
 APP_NAME="Flow"
 APP_BUNDLE="$TARGET_DIR/$APP_NAME.app"
 ASSETS_PATH="$PROJECT_DIR/Assets.xcassets"
+BUNDLE_IDENTIFIER="BlackMaple.Flow"
 
 echo "📦 Packaging $APP_NAME..."
 
@@ -60,7 +61,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<EOF
     <key>CFBundleExecutable</key>
     <string>$APP_NAME</string>
     <key>CFBundleIdentifier</key>
-    <string>com.example.Flow</string>
+    <string>$BUNDLE_IDENTIFIER</string>
     <key>CFBundleName</key>
     <string>$APP_NAME</string>
     <key>CFBundleShortVersionString</key>

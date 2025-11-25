@@ -51,6 +51,9 @@ final class TimerViewModel: ObservableObject {
     private let customTitleKey = "TimerView.sessionTitle"
     private var startTS: Date?
     private var tickCancellable: AnyCancellable?
+    private var activeScheduleID: UUID?
+    private var scheduledDurationOverride: Int?
+    private var scheduledCompletion: ((UUID, ScheduledRunOutcome) -> Void)?
 
     // Hook to persist sessions
     weak var store: SessionStore?
@@ -62,12 +65,14 @@ final class TimerViewModel: ObservableObject {
         self.remaining = flowDuration
 #if os(macOS)
         if let url = customAlertSoundURL {
-            if !AlertManager.shared.setCustomSound(url: url) {
+            if let stored = AlertManager.shared.setCustomSound(url: url) {
+                alertSoundPath = stored.path
+            } else {
                 alertSoundPath = ""
-                AlertManager.shared.setCustomSound(url: nil)
+                _ = AlertManager.shared.setCustomSound(url: nil)
             }
         } else {
-            AlertManager.shared.setCustomSound(url: nil)
+            _ = AlertManager.shared.setCustomSound(url: nil)
         }
 #endif
     }
@@ -97,13 +102,20 @@ final class TimerViewModel: ObservableObject {
         if elapsed > 0 {
             persistSession(actualSeconds: elapsed)
         }
+        if activeScheduleID != nil {
+            notifyScheduledOutcome(.failed(reason: "Stopped early"))
+        }
         resetAfterStop()
     }
 
     func complete() {
+        stopAlarmSound()
         let finishedMode = mode
         let upcomingMode = nextMode(afterCompleting: finishedMode)
         persistSession(actualSeconds: intendedSeconds())
+        if activeScheduleID != nil {
+            notifyScheduledOutcome(.succeeded)
+        }
         // Advance cycle logic
         if mode == .flow {
             completedFlowsInCycle += 1
@@ -123,6 +135,9 @@ final class TimerViewModel: ObservableObject {
 
     func resetToFlow() {
         stopAlarmSound()
+        if activeScheduleID != nil {
+            notifyScheduledOutcome(.failed(reason: "Reset"))
+        }
         mode = .flow
         remaining = flowDuration
         isRunning = false
@@ -133,6 +148,9 @@ final class TimerViewModel: ObservableObject {
     func resetCurrentSession() {
         stopAlarmSound()
         pause()
+        if activeScheduleID != nil {
+            notifyScheduledOutcome(.failed(reason: "Reset"))
+        }
         startTS = nil
         remaining = intendedSeconds()
     }
@@ -142,6 +160,9 @@ final class TimerViewModel: ObservableObject {
         stopAlarmSound()
         pause()
         persistSession(actualSeconds: elapsed)
+        if activeScheduleID != nil {
+            notifyScheduledOutcome(.failed(reason: "Skipped"))
+        }
         if mode == .flow {
             completedFlowsInCycle += 1
         }
@@ -154,6 +175,27 @@ final class TimerViewModel: ObservableObject {
         let sanitized = trimmed.isEmpty ? "Flow" : trimmed
         sessionTitle = sanitized
         UserDefaults.standard.set(sanitized, forKey: customTitleKey)
+    }
+
+    func startScheduledRun(
+        id: UUID,
+        title: String,
+        duration: Int,
+        startDate: Date,
+        completion: @escaping (UUID, ScheduledRunOutcome) -> Void
+    ) {
+        stopAlarmSound()
+        activeScheduleID = id
+        scheduledDurationOverride = duration
+        scheduledCompletion = completion
+        sessionTitle = title
+        UserDefaults.standard.set(title, forKey: customTitleKey)
+        mode = .flow
+        remaining = duration
+        startTS = startDate
+        tickCancellable?.cancel()
+        triggerScheduledStartSound()
+        start()
     }
 
     func stopAlarmSound() {
@@ -175,8 +217,8 @@ final class TimerViewModel: ObservableObject {
 
     @discardableResult
     func applyCustomAlertSound(url: URL) -> Bool {
-        if AlertManager.shared.setCustomSound(url: url) {
-            alertSoundPath = url.path
+        if let storedURL = AlertManager.shared.setCustomSound(url: url) {
+            alertSoundPath = storedURL.path
             return true
         }
         return false
@@ -184,7 +226,7 @@ final class TimerViewModel: ObservableObject {
 
     func clearCustomAlertSoundSelection() {
         alertSoundPath = ""
-        AlertManager.shared.setCustomSound(url: nil)
+        _ = AlertManager.shared.setCustomSound(url: nil)
     }
 
     private var customAlertSoundURL: URL? {
@@ -204,6 +246,7 @@ final class TimerViewModel: ObservableObject {
     }
 
     private func intendedSeconds() -> Int {
+        if let override = scheduledDurationOverride { return override }
         switch mode {
         case .flow: return flowDuration
         case .shortBreak: return shortBreak
@@ -225,11 +268,38 @@ final class TimerViewModel: ObservableObject {
         store.add(s)
     }
 
+    private func notifyScheduledOutcome(_ outcome: ScheduledRunOutcome) {
+        guard let scheduleID = activeScheduleID else { return }
+        scheduledCompletion?(scheduleID, outcome)
+        clearScheduleContext()
+    }
+
+    private func clearScheduleContext() {
+        activeScheduleID = nil
+        scheduledCompletion = nil
+        scheduledDurationOverride = nil
+    }
+
     private func resetAfterStop() {
         pause()
         startTS = nil
         remaining = intendedSeconds()
     }
+
+#if os(macOS)
+    private func triggerScheduledStartSound() {
+        AlertManager.shared.deliverScheduledStartAlert(
+            flowTitle: sessionTitle,
+            volume: 1,
+            shouldLoop: true
+        )
+        isAlarmRinging = true
+    }
+#else
+    private func triggerScheduledStartSound() {
+        isAlarmRinging = true
+    }
+#endif
 
     private func advanceModeAfterCompletion() {
         // Flow -> (short/long) break; Break -> Flow
