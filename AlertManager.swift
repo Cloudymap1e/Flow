@@ -2,14 +2,13 @@
 import AppKit
 import Foundation
 import UserNotifications
-import AVFoundation
 
 final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
     static let shared = AlertManager()
     private let center: UNUserNotificationCenter?
     private var sound: NSSound?
     private var customSoundURL: URL?
-    private var audioPlayer: AVAudioPlayer?
+    private var customSoundActive = false
     private let customSoundURLKey = "AlertManager.customSoundURL"
 
     private override init() {
@@ -117,37 +116,28 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
         let playBlock: () -> Bool = { [weak self] in
             guard let self else { return false }
             if useCustomSound {
-                if self.sound == nil && self.audioPlayer == nil {
-                    _ = self.reloadSound()
+                if !self.customSoundActive {
+                    _ = self.reloadSound(forceCustom: true)
                 }
             } else {
-                self.audioPlayer?.stop()
-                self.audioPlayer = nil
                 self.sound = AlertManager.makeDefaultSound()
+                self.customSoundActive = false
             }
             self.stopSound()
 
             var played = false
-            if let player = self.audioPlayer {
-                player.volume = Float(clamped)
-                player.numberOfLoops = shouldLoop ? -1 : 0
-                player.currentTime = 0
-                played = player.play()
-            } else if let sound = self.sound {
+            if let sound = self.sound {
                 sound.volume = Float(clamped)
                 sound.loops = shouldLoop
+                sound.currentTime = 0
                 played = sound.play()
             }
 
-            if useCustomSound && !played && self.reloadSound() {
-                if let player = self.audioPlayer {
-                    player.volume = Float(clamped)
-                    player.numberOfLoops = shouldLoop ? -1 : 0
-                    player.currentTime = 0
-                    played = player.play()
-                } else if let sound = self.sound {
+            if useCustomSound && !played && self.reloadSound(forceCustom: true) {
+                if let sound = self.sound {
                     sound.volume = Float(clamped)
                     sound.loops = shouldLoop
+                    sound.currentTime = 0
                     played = sound.play()
                 }
             }
@@ -157,8 +147,7 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
             } else {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
                     guard let self else { return }
-                    let stillPlaying = (self.audioPlayer?.isPlaying == true) || (self.sound?.isPlaying == true)
-                    if !stillPlaying {
+                    if self.sound?.isPlaying != true {
                         NSSound.beep()
                     }
                 }
@@ -179,8 +168,7 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
 
     func stopSound() {
         let stopAction = { [weak self] in
-            self?.audioPlayer?.stop()
-            self?.sound?.stop()
+            _ = self?.sound?.stop()
         }
         if Thread.isMainThread {
             stopAction()
@@ -218,12 +206,12 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
     @discardableResult
     private func reloadSound(forceCustom: Bool = false) -> Bool {
         sound?.stop()
-        audioPlayer?.stop()
         sound = nil
-        audioPlayer = nil
 
         if let url = customSoundURL {
-            if loadSound(from: url) {
+            if let custom = loadSound(from: url) {
+                sound = custom
+                customSoundActive = true
                 return true
             }
             if forceCustom {
@@ -231,16 +219,15 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
             }
         }
 
-        if let fallback = AlertManager.makeDefaultSound() {
-            sound = fallback
-            return true
+        guard let fallback = AlertManager.makeDefaultSound() else {
+            return false
         }
-
-        sound = nil
-        return false
+        sound = fallback
+        customSoundActive = false
+        return true
     }
 
-    private func loadSound(from url: URL) -> Bool {
+    private func loadSound(from url: URL) -> NSSound? {
         let hasAccess = url.startAccessingSecurityScopedResource()
         defer {
             if hasAccess {
@@ -248,26 +235,21 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
             }
         }
 
-        do {
-            let data = try Data(contentsOf: url)
-            let player = try AVAudioPlayer(data: data)
-            player.prepareToPlay()
-            audioPlayer = player
-            sound = nil
-            return true
-        } catch {
-            NSLog("Flow custom sound load failed: \(error.localizedDescription)")
-            audioPlayer = nil
-        }
-
         if let custom = NSSound(contentsOf: url, byReference: false) {
+            AlertManager.configurePlaybackDevice(for: custom)
             custom.loops = false
-            sound = custom
-            audioPlayer = nil
-            return true
+            return custom
         }
 
-        return false
+        if let data = try? Data(contentsOf: url),
+           let custom = NSSound(data: data) {
+            AlertManager.configurePlaybackDevice(for: custom)
+            custom.loops = false
+            return custom
+        }
+
+        NSLog("Flow custom sound load failed: Unsupported format or unreadable data at \(url.path)")
+        return nil
     }
 
     private func clearPersistedCustomSound() {
@@ -275,16 +257,26 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
         UserDefaults.standard.removeObject(forKey: customSoundURLKey)
     }
 
+    private static func configurePlaybackDevice(for sound: NSSound) {
+        if let identifier = BuiltInAudioDevice.playbackIdentifier() {
+            sound.playbackDeviceIdentifier = identifier
+        } else {
+            sound.playbackDeviceIdentifier = nil
+        }
+    }
+
     private static func makeDefaultSound() -> NSSound? {
         let preferredNames = ["Funk", "Submarine", "Hero", "Glass", "Ping", "Basso"]
         for name in preferredNames {
             if let snd = NSSound(named: NSSound.Name(name)) {
                 snd.loops = false
+                configurePlaybackDevice(for: snd)
                 return snd
             }
             let url = URL(fileURLWithPath: "/System/Library/Sounds/\(name).aiff")
             if let snd = NSSound(contentsOf: url, byReference: true) {
                 snd.loops = false
+                configurePlaybackDevice(for: snd)
                 return snd
             }
         }
@@ -292,6 +284,7 @@ final class AlertManager: NSObject, UNUserNotificationCenterDelegate {
         if let bundled = Bundle.main.url(forResource: "FlowComplete", withExtension: "aiff"),
            let snd = NSSound(contentsOf: bundled, byReference: true) {
             snd.loops = false
+            configurePlaybackDevice(for: snd)
             return snd
         }
 

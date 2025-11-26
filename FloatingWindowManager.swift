@@ -288,6 +288,7 @@ final class FloatingWindowManager: NSObject, ObservableObject {
 
     @objc private func appDidResignActive(_ notification: Notification) {
         isAppActive = false
+        collapseMainWindowForBackground()
         showFloatingPanel(reason: .preference)
     }
 
@@ -301,6 +302,13 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         if !showExistingMainWindow() {
             requestMainWindowCreationIfNeeded()
         }
+    }
+
+    private func collapseMainWindowForBackground() {
+        guard isPreferenceEnabled else { return }
+        guard let window = mainWindow ?? findMainWindowInApplication() else { return }
+        guard window.isVisible else { return }
+        window.orderOut(nil)
     }
 }
 

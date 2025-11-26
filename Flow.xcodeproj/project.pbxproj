@@ -14,6 +14,7 @@
 		511C6EAA2ED3FA490012F103 /* EffectiveFocusCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511C6EA92ED3FA490012F103 /* EffectiveFocusCalculator.swift */; };
 		511C6EE62ED59E400012F103 /* FlowScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511C6EE52ED59E400012F103 /* FlowScheduler.swift */; };
 		511C6EE72ED59E400012F103 /* CalendarTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511C6EE42ED59E400012F103 /* CalendarTabView.swift */; };
+		51490F032ED696FE00C77332 /* BuiltInAudioDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51490F022ED696FE00C77332 /* BuiltInAudioDevice.swift */; };
 		51A85EA72ECE04860033FEC2 /* MiniTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA32ECE04860033FEC2 /* MiniTimerView.swift */; };
 		51A85EA82ECE04860033FEC2 /* WindowAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A85EA52ECE04860033FEC2 /* WindowAccessor.swift */; };
 		51E23B9E2ECDAEB90054BB0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51E23B9D2ECDAEB90054BB0F /* Assets.xcassets */; };
@@ -49,6 +50,7 @@
 		511C6EA92ED3FA490012F103 /* EffectiveFocusCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectiveFocusCalculator.swift; sourceTree = "<group>"; };
 		511C6EE42ED59E400012F103 /* CalendarTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTabView.swift; sourceTree = "<group>"; };
 		511C6EE52ED59E400012F103 /* FlowScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowScheduler.swift; sourceTree = "<group>"; };
+		51490F022ED696FE00C77332 /* BuiltInAudioDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltInAudioDevice.swift; sourceTree = "<group>"; };
 		516FAF0F2ECBB44D006E3E0E /* Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		516FAF1D2ECBB44E006E3E0E /* FlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		516FAF272ECBB44E006E3E0E /* FlowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +103,7 @@
 		516FAF062ECBB44D006E3E0E = {
 			isa = PBXGroup;
 			children = (
+				51490F022ED696FE00C77332 /* BuiltInAudioDevice.swift */,
 				511C6EE42ED59E400012F103 /* CalendarTabView.swift */,
 				511C6EE52ED59E400012F103 /* FlowScheduler.swift */,
 				511C6EA92ED3FA490012F103 /* EffectiveFocusCalculator.swift */,
@@ -288,6 +291,7 @@
 				C0DE00012345678900000002 /* FlowNotifications.swift in Sources */,
 				511C6EE62ED59E400012F103 /* FlowScheduler.swift in Sources */,
 				511C6EE72ED59E400012F103 /* CalendarTabView.swift in Sources */,
+				51490F032ED696FE00C77332 /* BuiltInAudioDevice.swift in Sources */,
 				C0DE00012345678900000001 /* AlertManager.swift in Sources */,
 				C0DE00012345678900000003 /* FloatingWindowManager.swift in Sources */,
 				C0DE00012345678900000004 /* WindowEventHandler.swift in Sources */,

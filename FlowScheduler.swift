@@ -107,13 +107,15 @@ final class FlowScheduler: ObservableObject {
             failDueEntriesWithoutTimer(now: now)
             return
         }
-        failConflictingPendingEntries(at: now, timerIsRunning: timer.isRunning)
-        guard activeEntryID == nil else { return }
-        guard let next = nextRunnableEntry(at: now) else { return }
-        if timer.isRunning {
-            mark(entryID: next.id, as: .failed, note: "Conflicted with a running timer")
+        if timer.isRunning, activeEntryID == nil, let next = nextRunnableEntry(at: now) {
+            timer.stopAndSavePartial()
+            start(entry: next, timer: timer, now: now)
             return
         }
+        failConflictingPendingEntries(at: now, shouldFail: timer.isRunning && activeEntryID != nil)
+        guard activeEntryID == nil else { return }
+        guard !timer.isRunning else { return }
+        guard let next = nextRunnableEntry(at: now) else { return }
         start(entry: next, timer: timer, now: now)
     }
 
@@ -159,8 +161,8 @@ final class FlowScheduler: ObservableObject {
         activeEntryID = nil
     }
 
-    private func failConflictingPendingEntries(at date: Date, timerIsRunning: Bool) {
-        guard timerIsRunning else { return }
+    private func failConflictingPendingEntries(at date: Date, shouldFail: Bool) {
+        guard shouldFail else { return }
         let conflicts = entries.filter { $0.status == .pending && $0.startDate <= date }
         for entry in conflicts {
             mark(entryID: entry.id, as: .failed, note: "Conflicted with a running timer")
