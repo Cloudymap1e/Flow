@@ -15,6 +15,8 @@ final class TimerViewModel: ObservableObject {
         }
     }
 
+    private static let floatPreferenceKey = "floatOnBackground"
+
     // User-adjustable durations (mirrors your iOS menu).
     @Published var flowDuration: Int = 25 * 60     // seconds
     @Published var shortBreak: Int = 5 * 60
@@ -23,7 +25,14 @@ final class TimerViewModel: ObservableObject {
     // Cycle: after 4 flows, propose a long break.
     @Published private(set) var completedFlowsInCycle: Int = 0
     @Published private(set) var mode: Mode = .flow
-    @AppStorage("floatOnBackground") var floatOnBackground: Bool = false
+    @Published var floatOnBackground: Bool = UserDefaults.standard.bool(
+        forKey: TimerViewModel.floatPreferenceKey
+    ) {
+        didSet {
+            guard oldValue != floatOnBackground else { return }
+            UserDefaults.standard.set(floatOnBackground, forKey: TimerViewModel.floatPreferenceKey)
+        }
+    }
     @Published private(set) var isRunning: Bool = false
     @Published private(set) var remaining: Int = 25 * 60
     @Published private(set) var sessionTitle: String

@@ -18,7 +18,7 @@ final class FloatingWindowManager: NSObject, ObservableObject {
     private let floatingPanelAlpha: CGFloat = 0.9
 
     private weak var timer: TimerViewModel?
-    private weak var mainWindow: NSWindow?
+    private var mainWindow: NSWindow?
     private var mainWindowDelegate: WindowEventHandler?
     private var floatingPanel: NSPanel?
     private var hostingController: NSHostingController<MiniTimerContainerView>?
@@ -62,11 +62,18 @@ final class FloatingWindowManager: NSObject, ObservableObject {
     func configure(mainWindow: NSWindow?, timer: TimerViewModel) {
         self.timer = timer
         guard let window = mainWindow else { return }
-        guard self.mainWindow !== window else { return }
+
+        if let existing = self.mainWindow, existing !== window {
+            closeExtraneousWindow(window, keeping: existing)
+            return
+        } else if self.mainWindow === window {
+            return
+        }
 
         self.mainWindow = window
         hasConfiguredMainWindow = true
         isRequestingMainWindow = false
+        window.identifier = NSUserInterfaceItemIdentifier("main")
         window.isReleasedWhenClosed = false
         window.tabbingMode = .disallowed
         window.isOpaque = false
@@ -88,6 +95,14 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         if window.isVisible {
             handleMainWindowActivated()
         }
+    }
+
+    // SwiftUI can recreate multiple Flow windows (e.g., state restoration). We only
+    // support a single primary window, so immediately dismiss the extras.
+    private func closeExtraneousWindow(_ window: NSWindow, keeping main: NSWindow) {
+        window.orderOut(nil)
+        window.close()
+        main.makeKeyAndOrderFront(nil)
     }
 
     func setFloatingEnabled(_ enabled: Bool) {
