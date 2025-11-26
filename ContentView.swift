@@ -117,62 +117,9 @@ private struct ErrorBanner: View {
 
 // MARK: - Background View
 struct BackgroundView: View {
-    @State private var animate: Bool = false
-
     var body: some View {
-        ZStack {
-            // Base color
-            Color(nsColor: .windowBackgroundColor)
-                .ignoresSafeArea()
-
-            // Animated Mesh Gradient simulation
-            GeometryReader { proxy in
-                ZStack {
-                    // Blob 1
-                    Circle()
-                        .fill(Color.blue.opacity(0.4))
-                        .frame(width: proxy.size.width * 0.8, height: proxy.size.width * 0.8)
-                        .blur(radius: 100)
-                        .offset(x: animate ? -100 : 100, y: animate ? -50 : 50)
-                        .animation(
-                            Animation.easeInOut(duration: 20).repeatForever(autoreverses: true),
-                            value: animate
-                        )
-
-                    // Blob 2
-                    Circle()
-                        .fill(Color.purple.opacity(0.4))
-                        .frame(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7)
-                        .blur(radius: 100)
-                        .offset(x: animate ? 150 : -150, y: animate ? 100 : -100)
-                        .animation(
-                            Animation.easeInOut(duration: 18).repeatForever(autoreverses: true),
-                            value: animate
-                        )
-
-                    // Blob 3
-                    Circle()
-                        .fill(Color.cyan.opacity(0.3))
-                        .frame(width: proxy.size.width * 0.9, height: proxy.size.width * 0.9)
-                        .blur(radius: 120)
-                        .offset(x: animate ? -50 : 50, y: animate ? 150 : -150)
-                        .animation(
-                            Animation.easeInOut(duration: 25).repeatForever(autoreverses: true),
-                            value: animate
-                        )
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+        Color.white.opacity(0.3)
             .ignoresSafeArea()
-
-            // Glass overlay to smooth everything out
-            VisualEffectView(material: .hudWindow, blendingMode: .behindWindow)
-                .opacity(0.3)
-                .ignoresSafeArea()
-        }
-        .onAppear {
-            animate = true
-        }
     }
 }
 
