@@ -20,6 +20,13 @@ struct AppCommands: Commands {
             }
             .keyboardShortcut(.escape, modifiers: [])
 
+            #if os(macOS)
+            Button("Show Flow Window") {
+                NotificationCenter.default.post(name: .flowOpenMainWindow, object: nil)
+            }
+            .keyboardShortcut("f", modifiers: [.command, .shift])
+            #endif
+
             Divider()
 
             // Duration menus similar to your screenshots

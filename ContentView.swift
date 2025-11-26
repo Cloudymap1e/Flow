@@ -5,12 +5,14 @@ struct ContentView: View {
     @EnvironmentObject private var store: SessionStore
     @EnvironmentObject private var timer: TimerViewModel
     @EnvironmentObject private var scheduler: FlowScheduler
+    @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
 
     @State private var selectedTab: Int = 0 // 0 = Timer, 1 = Stats, 2 = Calendar, 3 = Countdown
     @State private var showErrorBanner: Bool = false
 
     var body: some View {
         MainView(selectedTab: $selectedTab)
+            .preferredColorScheme(forceDarkMode ? .dark : nil)
             .onAppear {
                 timer.attach(store: store)
                 scheduler.attach(timer: timer)
@@ -117,9 +119,21 @@ private struct ErrorBanner: View {
 
 // MARK: - Background View
 struct BackgroundView: View {
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("backgroundOpacity") private var backgroundOpacity: Double = 0.65
+
+    private var shadeOpacity: Double {
+        colorScheme == .dark ? 0.5 : 0.08
+    }
+
     var body: some View {
-        Color.white.opacity(0.3)
-            .ignoresSafeArea()
+        ZStack {
+            let base = colorScheme == .dark ? Color.black : Color.white
+            base.opacity(backgroundOpacity)
+            Color.black.opacity(shadeOpacity)
+        }
+        .compositingGroup()
+        .ignoresSafeArea()
     }
 }
 

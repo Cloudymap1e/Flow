@@ -20,6 +20,9 @@ struct TimerView: View {
     @State private var soundImportMessage: String?
     @State private var soundImportIsError: Bool = false
 #endif
+    @AppStorage("backgroundOpacity") private var backgroundOpacity: Double = 0.65
+    @AppStorage("forceDarkMode") private var forceDarkMode: Bool = false
+    @State private var showingAppearancePopover: Bool = false
 
     var body: some View {
         ZStack {
@@ -124,6 +127,37 @@ struct TimerView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("settings")
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    forceDarkMode.toggle()
+                }
+            } label: {
+                Image(systemName: forceDarkMode ? "moon.fill" : "sun.max.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, height: 36)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 0.5))
+            }
+            .buttonStyle(.plain)
+            .help(forceDarkMode ? "Switch to light background" : "Switch to dark background")
+
+            Button {
+                showingAppearancePopover.toggle()
+            } label: {
+                Image(systemName: "circle.lefthalf.filled")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, height: 36)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 0.5))
+            }
+            .buttonStyle(.plain)
+            .popover(isPresented: $showingAppearancePopover, arrowEdge: .top) {
+                appearancePopover
+            }
+            .help("Adjust background transparency")
             
             Spacer()
         }
@@ -249,6 +283,8 @@ struct TimerView: View {
             Toggle("Float when backgrounded", isOn: $timer.floatOnBackground)
                 .padding(.vertical, 4)
 
+            appearanceSection
+
             if let validationMessage {
                 Text(validationMessage)
                     .foregroundStyle(.red)
@@ -268,6 +304,41 @@ struct TimerView: View {
         }
         .padding(20)
         .frame(width: 340)
+    }
+
+    private var appearanceSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Background Transparency")
+                .font(.headline)
+            opacitySliderControls
+        }
+        .padding(.vertical, 4)
+    }
+
+    private var appearancePopover: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Appearance")
+                .font(.headline)
+            opacitySliderControls
+        }
+        .padding(18)
+        .frame(width: 240)
+    }
+
+    private var opacitySliderControls: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Slider(value: $backgroundOpacity, in: 0.2...1.0)
+            HStack {
+                Text("More transparent")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("\(Int(backgroundOpacity * 100))% opacity")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .accessibilityElement(children: .combine)
     }
 
     private var timerFaceGradient: RadialGradient {

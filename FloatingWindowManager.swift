@@ -69,6 +69,8 @@ final class FloatingWindowManager: NSObject, ObservableObject {
         isRequestingMainWindow = false
         window.isReleasedWhenClosed = false
         window.tabbingMode = .disallowed
+        window.isOpaque = false
+        window.backgroundColor = .clear
 
         let delegate = WindowEventHandler()
         delegate.closeRequested = { [weak self] in
