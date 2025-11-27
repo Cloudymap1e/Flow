@@ -38,17 +38,30 @@ final class FlowScheduler: ObservableObject {
     weak var timer: TimerViewModel?
 
     private var monitorCancellable: AnyCancellable?
+    private let persistenceDisabled: Bool
     private var calendar: Calendar = {
         var cal = Calendar.current
         cal.firstWeekday = 2
         return cal
     }()
 
-    init(timer: TimerViewModel? = nil) {
+    init(
+        timer: TimerViewModel? = nil,
+        entries: [ScheduledTimerEntry]? = nil,
+        shouldMonitor: Bool = true,
+        persistenceDisabled: Bool = false
+    ) {
         self.timer = timer
-        entries = FlowSchedulerStorage.load()
+        self.persistenceDisabled = persistenceDisabled
+        if let entries {
+            self.entries = entries
+        } else {
+            self.entries = FlowSchedulerStorage.load()
+        }
         recoverRunningEntriesIfNeeded()
-        startMonitoring()
+        if shouldMonitor {
+            startMonitoring()
+        }
     }
 
     deinit {
@@ -102,7 +115,8 @@ final class FlowScheduler: ObservableObject {
             }
     }
 
-    private func tick(now: Date) {
+    func tick(now: Date) {
+        failExpiredPendingEntries(at: now)
         guard let timer else {
             failDueEntriesWithoutTimer(now: now)
             return
@@ -121,7 +135,7 @@ final class FlowScheduler: ObservableObject {
 
     private func nextRunnableEntry(at date: Date) -> ScheduledTimerEntry? {
         entries
-            .filter { $0.status == .pending && $0.startDate <= date }
+            .filter { $0.status == .pending && $0.startDate <= date && !$0.isExpired(relativeTo: date) }
             .sorted { $0.startDate < $1.startDate }
             .first
     }
@@ -176,6 +190,13 @@ final class FlowScheduler: ObservableObject {
         }
     }
 
+    private func failExpiredPendingEntries(at date: Date) {
+        let expired = entries.filter { $0.status == .pending && $0.isExpired(relativeTo: date) }
+        for entry in expired {
+            mark(entryID: entry.id, as: .failed, note: "Missed scheduled window")
+        }
+    }
+
     private func recoverRunningEntriesIfNeeded() {
         let running = entries.filter { $0.status == .running }
         guard !running.isEmpty else { return }
@@ -211,7 +232,14 @@ final class FlowScheduler: ObservableObject {
     }
 
     private func persist() {
+        guard !persistenceDisabled else { return }
         FlowSchedulerStorage.save(entries: entries)
+    }
+}
+
+private extension ScheduledTimerEntry {
+    func isExpired(relativeTo date: Date) -> Bool {
+        endDate <= date
     }
 }
 
